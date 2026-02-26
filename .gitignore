@@ -1,0 +1,20 @@
+# OpenClaw sensitive
+.openclaw/
+node_modules/
+*.log
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Secrets
+*.key
+*.pem
+credentials.json
