@@ -1,0 +1,176 @@
+.solar-system {
+  position: relative;
+  width: 2400px;
+  height: 2400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.4);
+  transform-origin: center center;
+}
+
+/* Sun */
+.sun {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.sun-core {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #00f0ff 50%, #ff00aa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.6), 0 0 80px rgba(255, 0, 170, 0.4);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.sun-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+  animation: glowRotate 30s linear infinite;
+}
+
+@keyframes glowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Orbit Rings */
+.orbit-ring,
+.orbit-ring-skill {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.orbit-ring {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.orbit-ring-skill {
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Planet/Moon Containers */
+.planet-container,
+.moon-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: orbit linear infinite;
+}
+
+@keyframes orbit {
+  from { transform: translateX(-50%) rotate(0deg) translateX(50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(360deg) translateX(50%) rotate(-360deg); }
+}
+
+/* Planet */
+.planet {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: counterOrbit linear infinite;
+}
+
+.planet-label {
+  position: absolute;
+  top: -22px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px currentColor;
+  animation: counterOrbit linear infinite reverse;
+}
+
+/* Moon */
+.moon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: counterOrbit linear infinite;
+}
+
+.moon-icon {
+  font-size: 10px;
+  animation: counterOrbit linear infinite reverse;
+}
+
+@keyframes counterOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .solar-system { transform: scale(0.3); }
+}
+
+@media (max-width: 1000px) {
+  .solar-system { transform: scale(0.22); }
+}
+
+@media (max-width: 700px) {
+  .solar-system { transform: scale(0.16); }
+}
+
+/* Glass */
+.glass {
+  background: rgba(20, 20, 40, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .planet-container,
+  .moon-container,
+  .planet,
+  .moon,
+  .sun-core,
+  .sun-glow {
+    animation: none !important;
+  }
+}

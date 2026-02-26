@@ -1,0 +1,8 @@
+{
+  "name": "quota-minimax",
+  "description": "Check AI quota using Minimax M2.5 model",
+  "command": "/quota",
+  "model": "minimax-portal/MiniMax-M2.5",
+  "script": "/root/.openclaw/workspace/tools/quota-monitor.js",
+  "notes": "ใช้ Minimax M2.5 (ฟรี) สำหรับคำสั่ง /quota"
+}

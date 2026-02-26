@@ -12,6 +12,36 @@
 - ปิด process/dev server ที่ไม่ใช้ทุกครั้งหลังทำงานเสร็จ
 - สลับ model แล้วต้องยึดกฎเดิมทุกข้อ ห้ามลืม
 
+## DEC-2026-02-26-01
+type: decision
+area: operations
+
+เปลี่ยนทุก automated task ไปใช้ Minimax M2.5 (ฟรี):
+- /quota command → Minimax M2.5
+- UFAX9 Marketing Intel cron jobs (3 รอบ/วัน) → Minimax M2.5
+- ประหยัด ~$1-5/เดือน (90 runs/month ฟรี)
+- เก็บโควต้าแพง (Claude Opus) ไว้ใช้งานวิเคราะห์ลึกจริงๆ
+
+## DEC-2026-02-26-02
+type: decision
+area: config
+
+เพิ่ม aamsainz3@gmail.com เป็น fallback account สำหรับ Google Antigravity:
+- Fallback order: aamsainz3 (primary) → aamsainz1
+- ใช้สลับกันเมื่อโควต้าใกล้หมด
+- ทั้ง 2 accounts ใช้ได้กับทุก session
+
+## FACT-2026-02-26-01
+type: fact
+area: tools
+
+Quota Monitor Tool สร้างเสร็จแล้ว:
+- Path: tools/quota-monitor.js
+- Command: /quota (ใน Telegram)
+- Features: Provider status, Model pools, Fallback chain
+- Support watch mode (--watch --interval=300)
+- ใช้ Minimax M2.5 ฟรีทุกครั้งที่เรียก
+
 ## Installed Skills
 - pkm (Personal Knowledge Base)
 - openclaw-mem (Memory Management)
