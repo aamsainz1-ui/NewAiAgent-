@@ -16,13 +16,13 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const ROOT = resolve(__dirname, '..');
-const WORKSPACE = resolve(ROOT, '..');
+const ROOT = resolve(__dirname, '..', '..', 'dashboard-src');
+const WORKSPACE = resolve(__dirname, '..', '..');
 const SKILLS_DIR = join(WORKSPACE, 'skills');
 const MEMORY_DIR = join(WORKSPACE, 'memory');
 const MEMORY_FILE = join(WORKSPACE, 'MEMORY.md');
-const CONFIG_FILE = join(WORKSPACE, '..', 'openclaw.json');
-const SESSIONS_DIR = join(WORKSPACE, '..', 'agents', 'main', 'sessions');
+const CONFIG_FILE = join(WORKSPACE, '..', '.openclaw', 'openclaw.json');
+const SESSIONS_DIR = join(WORKSPACE, '..', '.openclaw', 'agents', 'main', 'sessions');
 const OUT_FILE = join(ROOT, 'src', 'data', 'dashboardData.js');
 
 // ─── Category detection from SKILL.md description ───
