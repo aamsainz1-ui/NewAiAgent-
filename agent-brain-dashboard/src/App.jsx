@@ -6,42 +6,42 @@ import ForceGraph3D from 'react-force-graph-3d';
 const gData = {
   nodes: [
     // Core
-    { id: 'CORE', group: 0, label: 'OpenClaw Framework', desc: 'Central orchestrator for all AI Agents', val: 30 },
+    { id: 'CORE', group: 0, label: 'OpenClaw Framework', desc: 'Central orchestrator & Brain', stats: { cpu: '12%', ram: '4.2GB', uptime: '99.9%', tasks: '1.2M' }, val: 40 },
     
-    // Agents
-    { id: 'APEX', group: 1, label: 'APEX (CEO)', desc: 'Strategic planning, decision making, big picture', val: 20 },
-    { id: 'PULSE', group: 1, label: 'PULSE (CMO)', desc: 'Marketing, content, social media, ads', val: 20 },
-    { id: 'STAT', group: 1, label: 'STAT (CFO)', desc: 'Finance, analytics, data processing', val: 20 },
-    { id: 'LEDGER', group: 1, label: 'LEDGER (COO)', desc: 'Operations, team orchestration, workflows', val: 20 },
-    { id: 'AURA', group: 1, label: 'AURA (Designer)', desc: 'UI/UX, web design, creative', val: 20 },
-    { id: 'NEXUS', group: 1, label: 'NEXUS (CTO)', desc: 'Code architecture, deployment, infrastructure', val: 20 },
-    { id: 'CIPHER', group: 1, label: 'CIPHER (CISO)', desc: 'Security, audits, hardening', val: 20 },
-    { id: 'SYNC', group: 1, label: 'SYNC (Brand)', desc: 'Brand guidelines, consistency, tone', val: 20 },
+    // Agents (Executive)
+    { id: 'APEX', group: 1, label: 'APEX (CEO)', desc: 'Strategic planning & Decision', stats: { cpu: '8%', ram: '1.5GB', uptime: '98%', tasks: '12K' }, val: 25 },
+    { id: 'PULSE', group: 1, label: 'PULSE (CMO)', desc: 'Marketing & Trend Analysis', stats: { cpu: '15%', ram: '2.1GB', uptime: '97%', tasks: '45K' }, val: 25 },
+    { id: 'STAT', group: 1, label: 'STAT (CFO)', desc: 'Financial & Data Analytics', stats: { cpu: '22%', ram: '3.5GB', uptime: '99%', tasks: '8.5K' }, val: 25 },
+    { id: 'LEDGER', group: 1, label: 'LEDGER (COO)', desc: 'Operations & Workflow', stats: { cpu: '10%', ram: '1.2GB', uptime: '99%', tasks: '32K' }, val: 25 },
+    { id: 'AURA', group: 1, label: 'AURA (Creative)', desc: 'Design & UX/UI Generation', stats: { cpu: '45%', ram: '8.0GB', uptime: '95%', tasks: '4.2K' }, val: 25 },
+    { id: 'NEXUS', group: 1, label: 'NEXUS (CTO)', desc: 'Infrastructure & Code', stats: { cpu: '18%', ram: '4.2GB', uptime: '99.9%', tasks: '150K' }, val: 25 },
+    { id: 'CIPHER', group: 1, label: 'CIPHER (Security)', desc: 'Security & Audit', stats: { cpu: '5%', ram: '0.8GB', uptime: '100%', tasks: '24/7' }, val: 25 },
+    { id: 'SYNC', group: 1, label: 'SYNC (Brand)', desc: 'Brand Voice & Consistency', stats: { cpu: '3%', ram: '0.5GB', uptime: '98%', tasks: '1.5K' }, val: 25 },
 
-    // Roles
-    { id: 'Marketing', group: 2, label: 'Marketing', desc: 'Campaigns, virality, audience reach', val: 10 },
-    { id: 'Finance', group: 2, label: 'Finance', desc: 'Accounting, revenue tracking', val: 10 },
-    { id: 'Tech', group: 2, label: 'Technology', desc: 'Code, databases, servers', val: 10 },
-    { id: 'Ops', group: 2, label: 'Operations', desc: 'Day-to-day tasks, automation', val: 10 },
-    { id: 'Security', group: 2, label: 'Security', desc: 'Risk management, firewalls', val: 10 },
+    // Roles (Operational)
+    { id: 'Marketing', group: 2, label: 'Marketing Dept', desc: 'Campaign Execution', stats: { active: 'High', pending: 12 }, val: 15 },
+    { id: 'Finance', group: 2, label: 'Finance Dept', desc: 'Ledger & Accounts', stats: { active: 'Medium', pending: 3 }, val: 15 },
+    { id: 'Tech', group: 2, label: 'DevOps & Eng', desc: 'System Maintenance', stats: { active: 'Low', pending: 0 }, val: 15 },
+    { id: 'Ops', group: 2, label: 'Operations', desc: 'Task Routing', stats: { active: 'High', pending: 45 }, val: 15 },
+    { id: 'Security', group: 2, label: 'SecOps', desc: 'Threat Monitoring', stats: { active: 'Monitor', threats: 0 }, val: 15 },
 
-    // Skills (Tools)
-    { id: 'tiktok-ads', group: 3, label: 'TikTok Ads API', desc: 'Manage and create TikTok ad campaigns', val: 5 },
-    { id: 'tiktok-viral', group: 3, label: 'TikTok Viral', desc: 'Algorithm analysis for virality', val: 5 },
-    { id: 'meta-ads', group: 3, label: 'Meta Ads Manager', desc: 'FB/IG Ads automation', val: 5 },
-    { id: 'upload-post', group: 3, label: 'Auto Poster', desc: 'Cross-platform social media poster', val: 5 },
-    { id: 'fal-generate', group: 3, label: 'FAL Image Gen', desc: 'AI Image generation', val: 5 },
+    // Skills (Tools/Integrations)
+    { id: 'tiktok-ads', group: 3, label: 'TikTok Ads API', desc: 'Ad Campaign Manager', stats: { calls: '1.2K/day', latency: '120ms' }, val: 8 },
+    { id: 'tiktok-viral', group: 3, label: 'TikTok Trend Gen', desc: 'Viral Content Algo', stats: { calls: '500/day', latency: '400ms' }, val: 8 },
+    { id: 'meta-ads', group: 3, label: 'Meta Ads Manager', desc: 'FB/IG Ad Buying', stats: { calls: '800/day', latency: '150ms' }, val: 8 },
+    { id: 'upload-post', group: 3, label: 'Auto Poster', desc: 'Multi-platform Publish', stats: { posted: 450, failed: 2 }, val: 8 },
+    { id: 'fal-generate', group: 3, label: 'FAL Image Gen', desc: 'Flux/SDXL Generation', stats: { gen: 120, cost: '$4.20' }, val: 8 },
     
-    { id: 'ga4', group: 3, label: 'Google Analytics 4', desc: 'Web traffic analysis', val: 5 },
-    { id: 'stripe', group: 3, label: 'Stripe API', desc: 'Payment processing', val: 5 },
-    { id: 'xlsx', group: 3, label: 'Excel/XLSX', desc: 'Spreadsheet manipulation', val: 5 },
+    { id: 'ga4', group: 3, label: 'Google Analytics 4', desc: 'Traffic Analysis', stats: { events: '50K', users: '12K' }, val: 8 },
+    { id: 'stripe', group: 3, label: 'Stripe API', desc: 'Payment Gateway', stats: { tx: 150, vol: '$4.5K' }, val: 8 },
+    { id: 'xlsx', group: 3, label: 'Excel Processor', desc: 'Data Import/Export', stats: { files: 12, rows: '45K' }, val: 8 },
 
-    { id: 'team-orchestration', group: 3, label: 'Team Orchestration', desc: 'Agent-to-agent communication', val: 5 },
-    { id: 'team-manager', group: 3, label: 'Team Manager', desc: 'Task delegation', val: 5 },
+    { id: 'team-orchestration', group: 3, label: 'Orchestrator', desc: 'Agent Messaging Bus', stats: { msgs: '15K', latency: '10ms' }, val: 8 },
+    { id: 'team-manager', group: 3, label: 'Task Manager', desc: 'Delegation Logic', stats: { tasks: 45, queued: 2 }, val: 8 },
 
-    { id: 'webapp-testing', group: 3, label: 'Web Testing', desc: 'Automated E2E testing', val: 5 },
-    { id: 'mcp-builder', group: 3, label: 'MCP Builder', desc: 'Context provider building', val: 5 },
-    { id: 'cipher-sec', group: 3, label: 'Security Audit', desc: 'Vulnerability scanning', val: 5 },
+    { id: 'webapp-testing', group: 3, label: 'E2E Testing', desc: 'Playwright/Selenium', stats: { tests: 140, pass: '100%' }, val: 8 },
+    { id: 'mcp-builder', group: 3, label: 'MCP Builder', desc: 'Context Injection', stats: { ctx: '12MB', tokens: '4M' }, val: 8 },
+    { id: 'cipher-sec', group: 3, label: 'Vuln Scanner', desc: 'Auto-Audit', stats: { scans: 4, found: 0 }, val: 8 },
   ],
   links: [
     // Core to Agents
@@ -87,18 +87,19 @@ const gData = {
   ]
 };
 
+// Formal / Corporate Color Palette
 const colors = {
-  0: '#ffffff',
-  1: '#ff5555',
-  2: '#55ff55',
-  3: '#5555ff'
+  0: '#E0E0E0', // Core - Silver/White
+  1: '#2979FF', // Agents - Royal Blue
+  2: '#00BFA5', // Roles - Teal
+  3: '#7C4DFF'  // Skills - Deep Purple
 };
 
 const typeNames = {
-  0: 'SYSTEM',
-  1: 'AI AGENT',
-  2: 'ROLE',
-  3: 'SKILL / TOOL'
+  0: 'SYSTEM CORE',
+  1: 'EXECUTIVE AGENT',
+  2: 'OPERATIONAL ROLE',
+  3: 'SKILL / MODULE'
 };
 
 export default function App() {
@@ -213,7 +214,25 @@ export default function App() {
           </div>
           
           <div style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: 5 }}>{selectedNode.label}</div>
-          <div style={{ fontSize: '0.95rem', color: '#ccc' }}>{selectedNode.desc}</div>
+          <div style={{ fontSize: '0.95rem', color: '#ccc', marginBottom: 15 }}>{selectedNode.desc}</div>
+          
+          {selectedNode.stats && (
+            <div style={{ 
+              marginTop: 15, 
+              paddingTop: 15, 
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 10
+            }}>
+              {Object.entries(selectedNode.stats).map(([key, value]) => (
+                <div key={key} style={{ background: 'rgba(255,255,255,0.05)', padding: 8, borderRadius: 6 }}>
+                  <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>{key}</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#fff' }}>{value}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
