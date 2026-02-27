@@ -1,55 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 .panel-top-right {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(20, 20, 25, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 12px;
-  width: 300px;
-  backdrop-filter: blur(10px);
+  top: 30px;
+  right: 30px;
+  background: rgba(10, 15, 30, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+  padding: 25px;
+  border-radius: 4px;
+  width: 320px;
+  backdrop-filter: blur(15px);
   color: white;
   z-index: 10;
   max-height: 90vh;
   overflow-y: auto;
+  border-left: 3px solid #00f0ff;
+}
+
+.panel-top-right h2 {
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+  color: #00f0ff;
+  font-size: 1.1rem;
+  text-transform: uppercase;
 }
 
 .panel-bottom-left {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(20, 20, 25, 0.85);
+  bottom: 30px;
+  left: 30px;
+  background: rgba(10, 15, 30, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 12px;
-  width: 350px;
-  backdrop-filter: blur(10px);
+  border-top: 3px solid #2979FF;
+  padding: 25px;
+  border-radius: 4px;
+  width: 380px;
+  backdrop-filter: blur(15px);
   color: white;
   z-index: 10;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-box {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 768px) {
   .panel-top-right {
-    top: 10px;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    padding: 15px;
+    background: rgba(10, 15, 30, 0.95);
+    border: none;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    overflow: hidden;
+  }
+  
+  .panel-top-right h2 {
+    margin: 0;
+    font-size: 0.9rem;
+    padding: 0;
+    border: none;
+  }
+  
+  /* Hide legend on mobile header to save space */
+  .panel-top-right > div:nth-child(2) {
+    display: none;
+  }
+
+  .panel-top-right > div:last-child {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .panel-bottom-left {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    padding: 20px;
+    border: none;
+    border-top: 3px solid #2979FF;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}
+
+.panel-toggle-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(20, 20, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  backdrop-filter: blur(5px);
+}
+
+.floating-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+
+.floating-btn {
+  background: rgba(20, 20, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.floating-btn:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .panel-top-right {
+    top: 60px; /* Below the toggle button */
     right: 10px;
-    left: 10px;
-    width: auto;
-    padding: 10px;
+    left: auto; /* Don't stretch */
+    width: 250px;
+    max-height: 60vh;
+  }
+  
+  .panel-toggle-btn {
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .floating-controls {
+    bottom: 80px; /* Above bottom panel if open, or just up a bit */
+    right: 15px;
+  }
+}
+
+/* Override panel position to be below the toggle button */
+.panel-top-right {
+  top: 70px !important; 
+  right: 20px !important;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* On mobile, adjust further */
+@media (max-width: 768px) {
+  .panel-top-right {
+    top: 60px !important;
+    right: 10px !important;
+    left: auto !important;
+    width: 250px !important;
+  }
+  
+  .panel-toggle-btn {
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    z-index: 100; /* Ensure button is always on top */
+  }
+
+  .floating-controls {
+    bottom: 20px;
+    left: 20px; /* Move to left on mobile to avoid thumb conflict? Or right? */
+    right: auto;
+    flex-direction: row; /* Horizontal on mobile */
+  }
+}
+
+@media (max-width: 768px) {
+  .floating-controls {
+    top: 15px;
+    left: 15px;
+    bottom: auto;
+    right: auto;
+    flex-direction: row;
+  }
+  
+  .floating-btn {
+    padding: 8px 12px;
     font-size: 0.8rem;
   }
-  .panel-top-right h2 {
-    font-size: 1rem;
-    margin-bottom: 5px;
-  }
-  .panel-top-right .legend-item {
-    font-size: 0.75rem;
-    margin-bottom: 4px;
-  }
+
+  /* Make node details panel smaller font on mobile */
   .panel-bottom-left {
+    padding: 12px;
     bottom: 10px;
     left: 10px;
     right: 10px;
     width: auto;
-    padding: 15px;
+    max-height: 40vh;
+    overflow-y: auto;
   }
 }

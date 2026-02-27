@@ -106,6 +106,13 @@ export default function App() {
   const fgRef = useRef();
   const [selectedNode, setSelectedNode] = useState(null);
   const [isAutoRotating, setIsAutoRotating] = useState(true);
+  const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth > 768); // Default open on desktop, closed on mobile
+
+  useEffect(() => {
+    const handleResize = () => setIsPanelOpen(window.innerWidth > 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     let angle = 0;
@@ -163,38 +170,47 @@ export default function App() {
         backgroundColor="#0f0f11"
       />
 
-      <div className="panel-top-right">
-        <h2 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 10 }}>
-          OpenClaw Agents Graph
-        </h2>
-        
-        <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: 15 }}>
-          {gData.nodes.length} Nodes | {gData.links.length} Links
-        </div>
-        
-        <div style={{ marginBottom: 20 }}>
-          {Object.keys(colors).map(key => (
-            <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8, fontSize: '0.9rem' }}>
-              <div style={{ width: 12, height: 12, borderRadius: '50%', background: colors[key], marginRight: 10 }}></div>
-              {typeNames[key]}
-            </div>
-          ))}
-        </div>
+      <button 
+        className="panel-toggle-btn"
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+      >
+        {isPanelOpen ? '❌ Close Menu' : '☰ Open Menu'}
+      </button>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <button 
-            onClick={() => setIsAutoRotating(!isAutoRotating)}
-            style={{ background: '#4a4a6a', color: 'white', border: 'none', padding: '8px 15px', borderRadius: 6, cursor: 'pointer' }}
-          >
-            {isAutoRotating ? 'Stop Auto-Rotate' : 'Start Auto-Rotate'}
-          </button>
-          <button 
-            onClick={handleFitScreen}
-            style={{ background: '#4a4a6a', color: 'white', border: 'none', padding: '8px 15px', borderRadius: 6, cursor: 'pointer' }}
-          >
-            Fit to Screen
-          </button>
+      {isPanelOpen && (
+        <div className="panel-top-right">
+          <h2 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 10 }}>
+            OpenClaw Agents Graph
+          </h2>
+          
+          <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: 15 }}>
+            {gData.nodes.length} Nodes | {gData.links.length} Links
+          </div>
+          
+          <div style={{ marginBottom: 20 }}>
+            {Object.keys(colors).map(key => (
+              <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8, fontSize: '0.9rem' }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: colors[key], marginRight: 10 }}></div>
+                {typeNames[key]}
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+
+      <div className="floating-controls">
+        <button 
+          className="floating-btn"
+          onClick={() => setIsAutoRotating(!isAutoRotating)}
+        >
+          {isAutoRotating ? '⏸ Stop Rotation' : '▶ Start Rotation'}
+        </button>
+        <button 
+          className="floating-btn"
+          onClick={handleFitScreen}
+        >
+          🎯 Fit to Screen
+        </button>
       </div>
 
       {selectedNode && (
