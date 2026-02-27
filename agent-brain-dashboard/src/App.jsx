@@ -1,3 +1,4 @@
+import './App.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 
@@ -161,20 +162,8 @@ export default function App() {
         backgroundColor="#0f0f11"
       />
 
-      <div style={{
-        position: 'absolute',
-        top: 20,
-        right: 20,
-        background: 'rgba(20, 20, 25, 0.85)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: 20,
-        borderRadius: 12,
-        width: 300,
-        backdropFilter: 'blur(10px)',
-        color: 'white',
-        zIndex: 10
-      }}>
-        <h2 style={{ marginTop: 0, fontSize: '1.2rem', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 10 }}>
+      <div className="panel-top-right">
+        <h2 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 10 }}>
           OpenClaw Agents Graph
         </h2>
         
@@ -208,19 +197,7 @@ export default function App() {
       </div>
 
       {selectedNode && (
-        <div style={{
-          position: 'absolute',
-          bottom: 20,
-          left: 20,
-          background: 'rgba(20, 20, 25, 0.85)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: 20,
-          borderRadius: 12,
-          width: 350,
-          backdropFilter: 'blur(10px)',
-          color: 'white',
-          zIndex: 10
-        }}>
+        <div className="panel-bottom-left">
           <div style={{ 
             display: 'inline-block', 
             padding: '3px 8px', 

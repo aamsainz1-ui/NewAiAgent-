@@ -1,0 +1,55 @@
+.panel-top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(20, 20, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  backdrop-filter: blur(10px);
+  color: white;
+  z-index: 10;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.panel-bottom-left {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(20, 20, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  width: 350px;
+  backdrop-filter: blur(10px);
+  color: white;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .panel-top-right {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+  .panel-top-right h2 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+  .panel-top-right .legend-item {
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  .panel-bottom-left {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    padding: 15px;
+  }
+}
