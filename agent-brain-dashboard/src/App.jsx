@@ -1,139 +1,133 @@
 import './App.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
+import './App.css';
 
 // --- Data Definition ---
 const gData = {
   nodes: [
-    // Core
-    { id: 'CORE', group: 0, label: 'OpenClaw Framework', desc: 'Central orchestrator & Brain', stats: { cpu: '12%', ram: '4.2GB', uptime: '99.9%', tasks: '1.2M' }, val: 40 },
+    // --- LAYER 0: CORE SYSTEM ---
+    { id: 'CORE', group: 0, label: 'OpenClaw OS', desc: 'Central Kernel & Orchestrator', val: 50 },
+    { id: 'MEMORY', group: 0, label: 'Vector Memory', desc: 'Long-term Context (RAG)', val: 30 },
+    { id: 'GATEWAY', group: 0, label: 'API Gateway', desc: 'External Comms Hub', val: 30 },
+
+    // --- LAYER 1: AGENT EXECUTIVES ---
+    { id: 'APEX', group: 1, label: 'APEX (CEO)', desc: 'Strategy & Decision', val: 30 },
+    { id: 'PULSE', group: 1, label: 'PULSE (CMO)', desc: 'Growth & Trends', val: 30 },
+    { id: 'STAT', group: 1, label: 'STAT (CFO)', desc: 'Finance & Analytics', val: 30 },
+    { id: 'LEDGER', group: 1, label: 'LEDGER (COO)', desc: 'Ops & Workflow', val: 30 },
+    { id: 'AURA', group: 1, label: 'AURA (Design)', desc: 'Creative Director', val: 30 },
+    { id: 'NEXUS', group: 1, label: 'NEXUS (CTO)', desc: 'Engineering Lead', val: 30 },
+    { id: 'CIPHER', group: 1, label: 'CIPHER (CISO)', desc: 'Security Lead', val: 30 },
+    { id: 'SYNC', group: 1, label: 'SYNC (Brand)', desc: 'Voice & Identity', val: 30 },
+
+    // --- LAYER 2: AI MODELS (BRAINS) ---
+    { id: 'claude-3-5-sonnet', group: 2, label: 'Claude 3.5 Sonnet', desc: 'Coding & Reasoning', val: 20 },
+    { id: 'claude-3-opus', group: 2, label: 'Claude 3 Opus', desc: 'Complex Strategy', val: 20 },
+    { id: 'gemini-1-5-pro', group: 2, label: 'Gemini 1.5 Pro', desc: 'High Context Analysis', val: 20 },
+    { id: 'gpt-4o', group: 2, label: 'GPT-4o', desc: 'General Purpose', val: 20 },
+    { id: 'o1-preview', group: 2, label: 'OpenAI o1', desc: 'Deep Reasoning', val: 20 },
+    { id: 'flux-schnell', group: 2, label: 'Flux Schnell', desc: 'Fast Image Gen', val: 20 },
+
+    // --- LAYER 3: SKILLS & TOOLS ---
+    // Social & Ads
+    { id: 'tiktok-ads', group: 3, label: 'TikTok Ads API', desc: 'Campaign Mgmt', val: 10 },
+    { id: 'meta-ads', group: 3, label: 'Meta Ads Manager', desc: 'FB/IG Campaigns', val: 10 },
+    { id: 'twitter-api', group: 3, label: 'X/Twitter API', desc: 'Social Listening', val: 10 },
+    { id: 'auto-poster', group: 3, label: 'Content Scheduler', desc: 'Multi-platform Post', val: 10 },
     
-    // Agents (Executive)
-    { id: 'APEX', group: 1, label: 'APEX (CEO)', desc: 'Strategic planning & Decision', stats: { cpu: '8%', ram: '1.5GB', uptime: '98%', tasks: '12K' }, val: 25 },
-    { id: 'PULSE', group: 1, label: 'PULSE (CMO)', desc: 'Marketing & Trend Analysis', stats: { cpu: '15%', ram: '2.1GB', uptime: '97%', tasks: '45K' }, val: 25 },
-    { id: 'STAT', group: 1, label: 'STAT (CFO)', desc: 'Financial & Data Analytics', stats: { cpu: '22%', ram: '3.5GB', uptime: '99%', tasks: '8.5K' }, val: 25 },
-    { id: 'LEDGER', group: 1, label: 'LEDGER (COO)', desc: 'Operations & Workflow', stats: { cpu: '10%', ram: '1.2GB', uptime: '99%', tasks: '32K' }, val: 25 },
-    { id: 'AURA', group: 1, label: 'AURA (Creative)', desc: 'Design & UX/UI Generation', stats: { cpu: '45%', ram: '8.0GB', uptime: '95%', tasks: '4.2K' }, val: 25 },
-    { id: 'NEXUS', group: 1, label: 'NEXUS (CTO)', desc: 'Infrastructure & Code', stats: { cpu: '18%', ram: '4.2GB', uptime: '99.9%', tasks: '150K' }, val: 25 },
-    { id: 'CIPHER', group: 1, label: 'CIPHER (Security)', desc: 'Security & Audit', stats: { cpu: '5%', ram: '0.8GB', uptime: '100%', tasks: '24/7' }, val: 25 },
-    { id: 'SYNC', group: 1, label: 'SYNC (Brand)', desc: 'Brand Voice & Consistency', stats: { cpu: '3%', ram: '0.5GB', uptime: '98%', tasks: '1.5K' }, val: 25 },
-
-    // Roles (Operational)
-    { id: 'Marketing', group: 2, label: 'Marketing Dept', desc: 'Campaign Execution', stats: { active: 'High', pending: 12 }, val: 15 },
-    { id: 'Finance', group: 2, label: 'Finance Dept', desc: 'Ledger & Accounts', stats: { active: 'Medium', pending: 3 }, val: 15 },
-    { id: 'Tech', group: 2, label: 'DevOps & Eng', desc: 'System Maintenance', stats: { active: 'Low', pending: 0 }, val: 15 },
-    { id: 'Ops', group: 2, label: 'Operations', desc: 'Task Routing', stats: { active: 'High', pending: 45 }, val: 15 },
-    { id: 'Security', group: 2, label: 'SecOps', desc: 'Threat Monitoring', stats: { active: 'Monitor', threats: 0 }, val: 15 },
-
-    // Skills (Tools/Integrations)
-    { id: 'tiktok-ads', group: 3, label: 'TikTok Ads API', desc: 'Ad Campaign Manager', stats: { calls: '1.2K/day', latency: '120ms' }, val: 8 },
-    { id: 'tiktok-viral', group: 3, label: 'TikTok Trend Gen', desc: 'Viral Content Algo', stats: { calls: '500/day', latency: '400ms' }, val: 8 },
-    { id: 'meta-ads', group: 3, label: 'Meta Ads Manager', desc: 'FB/IG Ad Buying', stats: { calls: '800/day', latency: '150ms' }, val: 8 },
-    { id: 'upload-post', group: 3, label: 'Auto Poster', desc: 'Multi-platform Publish', stats: { posted: 450, failed: 2 }, val: 8 },
-    { id: 'fal-generate', group: 3, label: 'FAL Image Gen', desc: 'Flux/SDXL Generation', stats: { gen: 120, cost: '$4.20' }, val: 8 },
+    // Dev & Ops
+    { id: 'browser-auto', group: 3, label: 'Browser Automation', desc: 'Puppeteer/Playwright', val: 10 },
+    { id: 'web-search', group: 3, label: 'Brave Search', desc: 'Real-time Info', val: 10 },
+    { id: 'terminal', group: 3, label: 'Terminal Exec', desc: 'Shell Commands', val: 10 },
+    { id: 'file-sys', group: 3, label: 'File System', desc: 'Read/Write Access', val: 10 },
+    { id: 'git-ops', group: 3, label: 'Git Ops', desc: 'Version Control', val: 10 },
     
-    { id: 'ga4', group: 3, label: 'Google Analytics 4', desc: 'Traffic Analysis', stats: { events: '50K', users: '12K' }, val: 8 },
-    { id: 'stripe', group: 3, label: 'Stripe API', desc: 'Payment Gateway', stats: { tx: 150, vol: '$4.5K' }, val: 8 },
-    { id: 'xlsx', group: 3, label: 'Excel Processor', desc: 'Data Import/Export', stats: { files: 12, rows: '45K' }, val: 8 },
-
-    { id: 'team-orchestration', group: 3, label: 'Orchestrator', desc: 'Agent Messaging Bus', stats: { msgs: '15K', latency: '10ms' }, val: 8 },
-    { id: 'team-manager', group: 3, label: 'Task Manager', desc: 'Delegation Logic', stats: { tasks: 45, queued: 2 }, val: 8 },
-
-    { id: 'webapp-testing', group: 3, label: 'E2E Testing', desc: 'Playwright/Selenium', stats: { tests: 140, pass: '100%' }, val: 8 },
-    { id: 'mcp-builder', group: 3, label: 'MCP Builder', desc: 'Context Injection', stats: { ctx: '12MB', tokens: '4M' }, val: 8 },
-    { id: 'cipher-sec', group: 3, label: 'Vuln Scanner', desc: 'Auto-Audit', stats: { scans: 4, found: 0 }, val: 8 },
+    // Data & Finance
+    { id: 'stripe-api', group: 3, label: 'Stripe', desc: 'Payments', val: 10 },
+    { id: 'ga4', group: 3, label: 'Google Analytics', desc: 'Traffic Data', val: 10 },
+    { id: 'sheets', group: 3, label: 'Google Sheets', desc: 'Report Gen', val: 10 },
   ],
   links: [
-    // Core to Agents
+    // Core Links
+    { source: 'CORE', target: 'MEMORY' },
+    { source: 'CORE', target: 'GATEWAY' },
     { source: 'CORE', target: 'APEX' },
-    { source: 'CORE', target: 'PULSE' },
-    { source: 'CORE', target: 'STAT' },
-    { source: 'CORE', target: 'LEDGER' },
-    { source: 'CORE', target: 'AURA' },
     { source: 'CORE', target: 'NEXUS' },
     { source: 'CORE', target: 'CIPHER' },
-    { source: 'CORE', target: 'SYNC' },
 
-    // Agents to Roles
-    { source: 'APEX', target: 'Marketing' },
-    { source: 'APEX', target: 'Finance' },
-    { source: 'APEX', target: 'Ops' },
-    { source: 'PULSE', target: 'Marketing' },
-    { source: 'STAT', target: 'Finance' },
-    { source: 'LEDGER', target: 'Ops' },
-    { source: 'NEXUS', target: 'Tech' },
-    { source: 'AURA', target: 'Tech' },
-    { source: 'AURA', target: 'Marketing' },
-    { source: 'CIPHER', target: 'Security' },
-    { source: 'SYNC', target: 'Marketing' },
+    // Executive Hierarchy
+    { source: 'APEX', target: 'PULSE' },
+    { source: 'APEX', target: 'STAT' },
+    { source: 'APEX', target: 'LEDGER' },
+    { source: 'APEX', target: 'AURA' },
+    { source: 'APEX', target: 'SYNC' },
 
-    // Agents to Skills
+    // Model Usage (Who uses what mostly)
+    { source: 'NEXUS', target: 'claude-3-5-sonnet' },
+    { source: 'APEX', target: 'claude-3-opus' },
+    { source: 'PULSE', target: 'gpt-4o' },
+    { source: 'STAT', target: 'gemini-1-5-pro' }, // For big data
+    { source: 'AURA', target: 'flux-schnell' },
+
+    // Skill Assignments
     { source: 'PULSE', target: 'tiktok-ads' },
-    { source: 'PULSE', target: 'tiktok-viral' },
     { source: 'PULSE', target: 'meta-ads' },
-    { source: 'PULSE', target: 'upload-post' },
-    { source: 'PULSE', target: 'fal-generate' },
+    { source: 'PULSE', target: 'auto-poster' },
+    { source: 'PULSE', target: 'twitter-api' },
     
+    { source: 'NEXUS', target: 'browser-auto' },
+    { source: 'NEXUS', target: 'terminal' },
+    { source: 'NEXUS', target: 'git-ops' },
+    
+    { source: 'STAT', target: 'stripe-api' },
     { source: 'STAT', target: 'ga4' },
-    { source: 'STAT', target: 'stripe' },
-    { source: 'STAT', target: 'xlsx' },
-
-    { source: 'LEDGER', target: 'team-orchestration' },
-    { source: 'LEDGER', target: 'team-manager' },
-
-    { source: 'NEXUS', target: 'webapp-testing' },
-    { source: 'AURA', target: 'mcp-builder' },
-    { source: 'CIPHER', target: 'cipher-sec' },
+    { source: 'STAT', target: 'sheets' },
+    
+    { source: 'CIPHER', target: 'file-sys' }, // Auditing
+    { source: 'CORE', target: 'web-search' },
   ]
 };
 
-// Formal / Corporate Color Palette
 const colors = {
-  0: '#E0E0E0', // Core - Silver/White
-  1: '#2979FF', // Agents - Royal Blue
-  2: '#00BFA5', // Roles - Teal
-  3: '#7C4DFF'  // Skills - Deep Purple
-};
-
-const typeNames = {
-  0: 'SYSTEM CORE',
-  1: 'EXECUTIVE AGENT',
-  2: 'OPERATIONAL ROLE',
-  3: 'SKILL / MODULE'
+  0: '#ffffff', // Core - White
+  1: '#ff0055', // Agents - Neon Red/Pink
+  2: '#00ccff', // Models - Neon Cyan
+  3: '#ccff00'  // Skills - Neon Lime
 };
 
 export default function App() {
   const fgRef = useRef();
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [isAutoRotating, setIsAutoRotating] = useState(true);
-  const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth > 768); // Default open on desktop, closed on mobile
-
+  const [rotationSpeed, setRotationSpeed] = useState(0.5); // 0 to 2
+  const [isRotating, setIsRotating] = useState(true);
+  const [hoverNode, setHoverNode] = useState(null);
+  
+  // Auto-rotation logic
   useEffect(() => {
-    const handleResize = () => setIsPanelOpen(window.innerWidth > 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
+    if (!fgRef.current) return;
+    
+    let frameId;
     let angle = 0;
-    let interval;
-    if (isAutoRotating && fgRef.current) {
-      interval = setInterval(() => {
-        if (!selectedNode) {
-          fgRef.current.cameraPosition({
-            x: 250 * Math.sin(angle),
-            z: 250 * Math.cos(angle)
-          });
-          angle += Math.PI / 600;
-        }
-      }, 30);
-    }
-    return () => clearInterval(interval);
-  }, [isAutoRotating, selectedNode]);
+    
+    const animate = () => {
+      if (isRotating) {
+        angle += (0.003 * rotationSpeed);
+        const distance = 300;
+        fgRef.current.cameraPosition({
+          x: distance * Math.sin(angle),
+          z: distance * Math.cos(angle)
+        });
+      }
+      frameId = requestAnimationFrame(animate);
+    };
+    
+    if (isRotating) animate();
+    
+    return () => cancelAnimationFrame(frameId);
+  }, [isRotating, rotationSpeed]);
 
   const handleNodeClick = useCallback(node => {
-    setSelectedNode(node);
-    const distance = 100;
+    const distance = 120;
     const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
     
     if (fgRef.current) {
@@ -142,115 +136,83 @@ export default function App() {
         node,
         2000
       );
+      // Pause rotation when focusing
+      setIsRotating(false); 
     }
   }, [fgRef]);
 
-  const handleFitScreen = () => {
-    if (fgRef.current) {
-      fgRef.current.zoomToFit(1000);
-      setSelectedNode(null);
-    }
-  };
-
   return (
-    <div style={{ width: '100vw', height: '100vh', backgroundColor: '#0f0f11', overflow: 'hidden' }}>
+    <div className="app-container">
       <ForceGraph3D
         ref={fgRef}
         graphData={gData}
         nodeLabel="label"
         nodeColor={node => colors[node.group]}
         nodeVal="val"
-        linkWidth={1.5}
-        linkColor={() => 'rgba(255,255,255,0.2)'}
+        nodeResolution={16}
+        linkWidth={1}
+        linkColor={() => 'rgba(100, 200, 255, 0.2)'}
         linkDirectionalParticles={2}
-        linkDirectionalParticleWidth={2}
-        linkDirectionalParticleSpeed={d => 0.005}
+        linkDirectionalParticleSpeed={0.005}
         onNodeClick={handleNodeClick}
-        onBackgroundClick={() => setSelectedNode(null)}
-        backgroundColor="#0f0f11"
+        onNodeHover={setHoverNode}
+        backgroundColor="#050505"
       />
 
-      <button 
-        className="panel-toggle-btn"
-        onClick={() => setIsPanelOpen(!isPanelOpen)}
-      >
-        {isPanelOpen ? '❌ Close Menu' : '☰ Open Menu'}
-      </button>
-
-      {isPanelOpen && (
-        <div className="panel-top-right">
-          <h2 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 10 }}>
-            OpenClaw Agents Graph
-          </h2>
-          
-          <div style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: 15 }}>
-            {gData.nodes.length} Nodes | {gData.links.length} Links
-          </div>
-          
-          <div style={{ marginBottom: 20 }}>
-            {Object.keys(colors).map(key => (
-              <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8, fontSize: '0.9rem' }}>
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: colors[key], marginRight: 10 }}></div>
-                {typeNames[key]}
-              </div>
-            ))}
-          </div>
+      {/* --- HUD OVERLAY --- */}
+      <div className="hud-overlay">
+        
+        {/* Top Bar */}
+        <div className="hud-header">
+          <div className="hud-title">OpenClaw<span>//OS</span></div>
+          <div className="hud-status">ONLINE • {gData.nodes.length} MODULES ACTIVE</div>
         </div>
-      )}
 
-      <div className="floating-controls">
-        <button 
-          className="floating-btn"
-          onClick={() => setIsAutoRotating(!isAutoRotating)}
-        >
-          {isAutoRotating ? '⏸ Stop Rotation' : '▶ Start Rotation'}
-        </button>
-        <button 
-          className="floating-btn"
-          onClick={handleFitScreen}
-        >
-          🎯 Fit to Screen
-        </button>
-      </div>
-
-      {selectedNode && (
-        <div className="panel-bottom-left">
-          <div style={{ 
-            display: 'inline-block', 
-            padding: '3px 8px', 
-            borderRadius: 4, 
-            fontSize: '0.8rem', 
-            fontWeight: 'bold', 
-            marginBottom: 10,
-            textTransform: 'uppercase',
-            backgroundColor: colors[selectedNode.group],
-            color: selectedNode.group === 0 || selectedNode.group === 2 ? '#000' : '#fff'
-          }}>
-            {typeNames[selectedNode.group]}
+        {/* Controls (Bottom Right) */}
+        <div className="hud-controls">
+          <div className="control-group">
+            <label>ROTATION SPEED</label>
+            <input 
+              type="range" 
+              min="0" 
+              max="2" 
+              step="0.1" 
+              value={rotationSpeed}
+              onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
+            />
           </div>
-          
-          <div style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: 5 }}>{selectedNode.label}</div>
-          <div style={{ fontSize: '0.95rem', color: '#ccc', marginBottom: 15 }}>{selectedNode.desc}</div>
-          
-          {selectedNode.stats && (
-            <div style={{ 
-              marginTop: 15, 
-              paddingTop: 15, 
-              borderTop: '1px solid rgba(255,255,255,0.1)',
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 10
-            }}>
-              {Object.entries(selectedNode.stats).map(([key, value]) => (
-                <div key={key} style={{ background: 'rgba(255,255,255,0.05)', padding: 8, borderRadius: 6 }}>
-                  <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>{key}</div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#fff' }}>{value}</div>
-                </div>
-              ))}
+          <button 
+            className={`hud-btn ${isRotating ? 'active' : ''}`}
+            onClick={() => setIsRotating(!isRotating)}
+          >
+            {isRotating ? '⏸ PAUSE' : '▶ PLAY'}
+          </button>
+        </div>
+
+        {/* Node Detail (Bottom Left) */}
+        {(hoverNode) && (
+          <div className="hud-detail-panel">
+            <div className="detail-header" style={{ color: colors[hoverNode.group] }}>
+              {hoverNode.group === 0 ? 'CORE SYSTEM' : 
+               hoverNode.group === 1 ? 'AGENT UNIT' : 
+               hoverNode.group === 2 ? 'AI MODEL' : 'SKILL MODULE'}
             </div>
-          )}
-        </div>
-      )}
+            <h1>{hoverNode.label}</h1>
+            <p>{hoverNode.desc}</p>
+            <div className="detail-stat-grid">
+              <div className="stat-box">
+                <span className="label">LOAD</span>
+                <span className="val">{Math.floor(Math.random() * 30) + 10}%</span>
+              </div>
+              <div className="stat-box">
+                <span className="label">MEMORY</span>
+                <span className="val">{Math.floor(Math.random() * 500) + 120}MB</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
