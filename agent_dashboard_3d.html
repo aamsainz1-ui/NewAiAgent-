@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw AI Agents - 3D Knowledge Graph</title>
+  <script src="https://unpkg.com/3d-force-graph"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0f0f11;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+    #graph-container {
+      width: 100vw;
+      height: 100vh;
+    }
+    #ui-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(20, 20, 25, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 10px;
+    }
+    .stats {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .color-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    #node-info {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(20, 20, 25, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      width: 350px;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      display: none;
+    }
+    #node-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    #node-desc {
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+    #node-type {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      background: #4a4a6a;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #5a5a7a;
+    }
+  </style>
+</head>
+<body>
+  <div id="graph-container"></div>
+  
+  <div id="ui-panel">
+    <h2>OpenClaw Agents Graph</h2>
+    <div class="stats">
+      <span id="node-count">0</span> Nodes | <span id="link-count">0</span> Links
+    </div>
+    
+    <div class="legend">
+      <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Core System</div>
+      <div class="legend-item"><div class="color-box" style="background: #ff5555;"></div> C-Level Agents</div>
+      <div class="legend-item"><div class="color-box" style="background: #55ff55;"></div> Roles / Functions</div>
+      <div class="legend-item"><div class="color-box" style="background: #5555ff;"></div> AI Skills / Tools</div>
+    </div>
+
+    <div class="controls">
+      <button id="btn-auto-rotate">Toggle Auto-Rotate</button>
+      <button id="btn-fit">Fit to Screen</button>
+    </div>
+  </div>
+
+  <div id="node-info">
+    <div id="node-type">TYPE</div>
+    <div id="node-title">Node Name</div>
+    <div id="node-desc">Description goes here...</div>
+  </div>
+
+  <script>
+    // --- Data Definition ---
+    const gData = {
+      nodes: [
+        // Core
+        { id: 'CORE', group: 0, label: 'OpenClaw Framework', desc: 'Central orchestrator for all AI Agents', val: 30 },
+        
+        // Agents
+        { id: 'APEX', group: 1, label: 'APEX (CEO)', desc: 'Strategic planning, decision making, big picture', val: 20 },
+        { id: 'PULSE', group: 1, label: 'PULSE (CMO)', desc: 'Marketing, content, social media, ads', val: 20 },
+        { id: 'STAT', group: 1, label: 'STAT (CFO)', desc: 'Finance, analytics, data processing', val: 20 },
+        { id: 'LEDGER', group: 1, label: 'LEDGER (COO)', desc: 'Operations, team orchestration, workflows', val: 20 },
+        { id: 'AURA', group: 1, label: 'AURA (Designer)', desc: 'UI/UX, web design, creative', val: 20 },
+        { id: 'NEXUS', group: 1, label: 'NEXUS (CTO)', desc: 'Code architecture, deployment, infrastructure', val: 20 },
+        { id: 'CIPHER', group: 1, label: 'CIPHER (CISO)', desc: 'Security, audits, hardening', val: 20 },
+        { id: 'SYNC', group: 1, label: 'SYNC (Brand)', desc: 'Brand guidelines, consistency, tone', val: 20 },
+
+        // Roles
+        { id: 'Marketing', group: 2, label: 'Marketing', desc: 'Campaigns, virality, audience reach', val: 10 },
+        { id: 'Finance', group: 2, label: 'Finance', desc: 'Accounting, revenue tracking', val: 10 },
+        { id: 'Tech', group: 2, label: 'Technology', desc: 'Code, databases, servers', val: 10 },
+        { id: 'Ops', group: 2, label: 'Operations', desc: 'Day-to-day tasks, automation', val: 10 },
+        { id: 'Security', group: 2, label: 'Security', desc: 'Risk management, firewalls', val: 10 },
+
+        // Skills (Tools)
+        { id: 'tiktok-ads', group: 3, label: 'TikTok Ads API', desc: 'Manage and create TikTok ad campaigns', val: 5 },
+        { id: 'tiktok-viral', group: 3, label: 'TikTok Viral', desc: 'Algorithm analysis for virality', val: 5 },
+        { id: 'meta-ads', group: 3, label: 'Meta Ads Manager', desc: 'FB/IG Ads automation', val: 5 },
+        { id: 'upload-post', group: 3, label: 'Auto Poster', desc: 'Cross-platform social media poster', val: 5 },
+        { id: 'fal-generate', group: 3, label: 'FAL Image Gen', desc: 'AI Image generation', val: 5 },
+        
+        { id: 'ga4', group: 3, label: 'Google Analytics 4', desc: 'Web traffic analysis', val: 5 },
+        { id: 'stripe', group: 3, label: 'Stripe API', desc: 'Payment processing', val: 5 },
+        { id: 'xlsx', group: 3, label: 'Excel/XLSX', desc: 'Spreadsheet manipulation', val: 5 },
+
+        { id: 'team-orchestration', group: 3, label: 'Team Orchestration', desc: 'Agent-to-agent communication', val: 5 },
+        { id: 'team-manager', group: 3, label: 'Team Manager', desc: 'Task delegation', val: 5 },
+
+        { id: 'webapp-testing', group: 3, label: 'Web Testing', desc: 'Automated E2E testing', val: 5 },
+        { id: 'mcp-builder', group: 3, label: 'MCP Builder', desc: 'Context provider building', val: 5 },
+        { id: 'cipher-sec', group: 3, label: 'Security Audit', desc: 'Vulnerability scanning', val: 5 },
+      ],
+      links: [
+        // Core to Agents
+        { source: 'CORE', target: 'APEX' },
+        { source: 'CORE', target: 'PULSE' },
+        { source: 'CORE', target: 'STAT' },
+        { source: 'CORE', target: 'LEDGER' },
+        { source: 'CORE', target: 'AURA' },
+        { source: 'CORE', target: 'NEXUS' },
+        { source: 'CORE', target: 'CIPHER' },
+        { source: 'CORE', target: 'SYNC' },
+
+        // Agents to Roles
+        { source: 'APEX', target: 'Marketing' },
+        { source: 'APEX', target: 'Finance' },
+        { source: 'APEX', target: 'Ops' },
+        { source: 'PULSE', target: 'Marketing' },
+        { source: 'STAT', target: 'Finance' },
+        { source: 'LEDGER', target: 'Ops' },
+        { source: 'NEXUS', target: 'Tech' },
+        { source: 'AURA', target: 'Tech' },
+        { source: 'AURA', target: 'Marketing' },
+        { source: 'CIPHER', target: 'Security' },
+        { source: 'SYNC', target: 'Marketing' },
+
+        // Agents to Skills
+        { source: 'PULSE', target: 'tiktok-ads' },
+        { source: 'PULSE', target: 'tiktok-viral' },
+        { source: 'PULSE', target: 'meta-ads' },
+        { source: 'PULSE', target: 'upload-post' },
+        { source: 'PULSE', target: 'fal-generate' },
+        
+        { source: 'STAT', target: 'ga4' },
+        { source: 'STAT', target: 'stripe' },
+        { source: 'STAT', target: 'xlsx' },
+
+        { source: 'LEDGER', target: 'team-orchestration' },
+        { source: 'LEDGER', target: 'team-manager' },
+
+        { source: 'NEXUS', target: 'webapp-testing' },
+        { source: 'AURA', target: 'mcp-builder' },
+        { source: 'CIPHER', target: 'cipher-sec' },
+      ]
+    };
+
+    // Update UI Stats
+    document.getElementById('node-count').innerText = gData.nodes.length;
+    document.getElementById('link-count').innerText = gData.links.length;
+
+    // Node Colors
+    const colors = {
+      0: '#ffffff', // Core
+      1: '#ff5555', // Agents
+      2: '#55ff55', // Roles
+      3: '#5555ff'  // Skills
+    };
+    
+    const typeNames = {
+      0: 'SYSTEM',
+      1: 'AI AGENT',
+      2: 'ROLE',
+      3: 'SKILL / TOOL'
+    };
+
+    // Initialize 3D Graph
+    const Graph = ForceGraph3D()
+      (document.getElementById('graph-container'))
+        .graphData(gData)
+        .nodeLabel('label')
+        .nodeColor(node => colors[node.group])
+        .nodeVal('val')
+        .linkWidth(1.5)
+        .linkColor(() => 'rgba(255,255,255,0.2)')
+        .linkDirectionalParticles(2)
+        .linkDirectionalParticleWidth(2)
+        .linkDirectionalParticleSpeed(d => 0.005)
+        .onNodeClick(node => {
+          // Focus on node
+          const distance = 100;
+          const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+          Graph.cameraPosition(
+            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+            node, // lookAt
+            2000  // ms transition
+          );
+          
+          // Show Info Panel
+          const infoPanel = document.getElementById('node-info');
+          const typeLabel = document.getElementById('node-type');
+          
+          typeLabel.innerText = typeNames[node.group];
+          typeLabel.style.backgroundColor = colors[node.group];
+          typeLabel.style.color = node.group === 0 || node.group === 2 ? '#000' : '#fff';
+          
+          document.getElementById('node-title').innerText = node.label;
+          document.getElementById('node-desc').innerText = node.desc;
+          infoPanel.style.display = 'block';
+        })
+        .onBackgroundClick(() => {
+          document.getElementById('node-info').style.display = 'none';
+        });
+
+    // Controls
+    let isAutoRotating = true;
+    let autoRotateInterval;
+    
+    function toggleAutoRotate() {
+      if (isAutoRotating) {
+        clearInterval(autoRotateInterval);
+        isAutoRotating = false;
+      } else {
+        let angle = 0;
+        autoRotateInterval = setInterval(() => {
+          Graph.cameraPosition({
+            x: 250 * Math.sin(angle),
+            z: 250 * Math.cos(angle)
+          });
+          angle += Math.PI / 600;
+        }, 30);
+        isAutoRotating = true;
+      }
+    }
+    
+    // Start auto-rotate
+    toggleAutoRotate();
+
+    document.getElementById('btn-auto-rotate').addEventListener('click', toggleAutoRotate);
+    
+    document.getElementById('btn-fit').addEventListener('click', () => {
+      Graph.zoomToFit(1000);
+    });
+
+  </script>
+</body>
+</html>

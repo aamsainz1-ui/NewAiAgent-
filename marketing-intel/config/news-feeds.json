@@ -1,0 +1,93 @@
+{
+  "name": "UFAX9 News Feed Monitor",
+  "version": "1.0",
+  "description": "ติดตามข่าวสารการตลาด คู่แข่ง เทรนด์ อัตโนมัติ",
+  
+  "sources": {
+    "rss": [
+      {
+        "name": "Thai PBS Sports",
+        "url": "https://news.thaipbs.or.th/rss/sport.xml",
+        "category": "sports",
+        "enabled": true
+      },
+      {
+        "name": "Siam Sport", 
+        "url": "https://www.siamsport.co.th/rss/feed.xml",
+        "category": "sports",
+        "enabled": true
+      },
+      {
+        "name": "Goal.com Thailand",
+        "url": "https://www.goal.com/th/feeds/news", 
+        "category": "football",
+        "enabled": true
+      }
+    ],
+    
+    "googleAlerts": [
+      "ufabet",
+      "sbobet",
+      "lsm99", 
+      "gclub",
+      "แทงบอลออนไลน์",
+      "คาสิโนออนไลน์",
+      "เว็บพนัน",
+      "บาคาร่า",
+      "สล็อต",
+      "หวยออนไลน์",
+      "โปรโมชั่นแทงบอล",
+      "สมัครเว็บพนัน"
+    ],
+    
+    "socialKeywords": [
+      "#แทงบอล",
+      "#คาสิโน", 
+      "#ufabet",
+      "#sbobet",
+      "#เว็บพนัน",
+      "#บาคาร่า",
+      "#สล็อต",
+      "#หวยออนไลน์"
+    ]
+  },
+  
+  "competitors": [
+    {
+      "name": "ufabet",
+      "domains": ["ufabet.com", "ufabet.co"],
+      "social": ["@ufabetofficial"],
+      "track": true
+    },
+    {
+      "name": "sbobet", 
+      "domains": ["sbobet.com", "sbobetmobile.com"],
+      "social": ["@sbobet"],
+      "track": true
+    },
+    {
+      "name": "lsm99",
+      "domains": ["lsm99.com", "lsm99.net"], 
+      "social": ["@lsm99official"],
+      "track": true
+    },
+    {
+      "name": "gclub",
+      "domains": ["gclub.com", "gclub168.com"],
+      "social": ["@gclubcasino"],
+      "track": true
+    }
+  ],
+  
+  "notifications": {
+    "telegram": true,
+    "dailyDigest": "08:00",
+    "urgentAlerts": true
+  },
+  
+  "schedule": {
+    "checkInterval": "30min",
+    "dailyDigest": "08:00",
+    "weeklyReport": "monday 09:00"
+  }
+}
