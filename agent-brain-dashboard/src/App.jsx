@@ -211,6 +211,7 @@ export default function App() {
   const [showLightning, setShowLightning] = useState(true); // Added Lightning Effect
 
   const [hoverNode, setHoverNode] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth > 768);
 
   // Resize handler
@@ -253,6 +254,7 @@ export default function App() {
   }, [isRotating, rotationSpeed, isSphereMode, breathingEffect]);
 
   const handleNodeClick = useCallback(node => {
+    setSelectedNode(node);
     const distance = 120;
     const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
     if (fgRef.current) {
@@ -384,33 +386,66 @@ export default function App() {
           </div>
         )}
 
-        {/* Node Detail (Bottom Left) */}
-        {(hoverNode && hoverNode.group === 2) && (
+        {/* Node Detail (Bottom Left) - Shows on Hover OR Click for ALL nodes */}
+        {(hoverNode || selectedNode) && (
           <div className="hud-detail-panel">
-            <div className="detail-header" style={{ color: colors[hoverNode.group] }}>
-              AI MODEL
-            </div>
-            <h1>{hoverNode.label}</h1>
-            <p>{hoverNode.desc}</p>
-            
-            <div className="detail-stat-grid">
-              <div className="stat-box">
-                <span className="label">TOKENS</span>
-                <span className="val">{Math.floor(Math.random() * 500000 + 50000).toLocaleString()}</span>
-              </div>
-              <div className="stat-box">
-                <span className="label">COST</span>
-                <span className="val">${(Math.random() * 50 + 5).toFixed(2)}</span>
-              </div>
-              <div className="stat-box">
-                <span className="label">CALLS</span>
-                <span className="val">{Math.floor(Math.random() * 1000 + 100)}</span>
-              </div>
-              <div className="stat-box">
-                <span className="label">AVG TIME</span>
-                <span className="val">{(Math.random() * 3 + 0.5).toFixed(1)}s</span>
-              </div>
-            </div>
+            {(() => {
+              const activeNode = hoverNode || selectedNode;
+              const typeLabel = 
+                activeNode.group === 0 ? 'CORE SYSTEM' :
+                activeNode.group === 1 ? 'EXECUTIVE AGENT' :
+                activeNode.group === 2 ? 'AI MODEL' :
+                activeNode.group === 3 ? 'KNOWLEDGE DOMAIN' : 'SKILL / TOOL';
+              
+              return (
+                <>
+                  <div className="detail-header" style={{ color: colors[activeNode.group] }}>
+                    {typeLabel}
+                  </div>
+                  <h1>{activeNode.label}</h1>
+                  <p>{activeNode.desc}</p>
+                  
+                  {activeNode.group === 2 && (
+                    <div className="detail-stat-grid">
+                      <div className="stat-box">
+                        <span className="label">TOKENS</span>
+                        <span className="val">{Math.floor(Math.random() * 500000 + 50000).toLocaleString()}</span>
+                      </div>
+                      <div className="stat-box">
+                        <span className="label">COST</span>
+                        <span className="val">${(Math.random() * 50 + 5).toFixed(2)}</span>
+                      </div>
+                      <div className="stat-box">
+                        <span className="label">CALLS</span>
+                        <span className="val">{Math.floor(Math.random() * 1000 + 100)}</span>
+                      </div>
+                      <div className="stat-box">
+                        <span className="label">AVG TIME</span>
+                        <span className="val">{(Math.random() * 3 + 0.5).toFixed(1)}s</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {activeNode.group !== 2 && (
+                    <div className="detail-stat-grid">
+                      <div className="stat-box">
+                        <span className="label">STATUS</span>
+                        <span className="val" style={{color: '#4ade80'}}>ACTIVE</span>
+                      </div>
+                      <div className="stat-box">
+                        <span className="label">CONNECTIONS</span>
+                        <span className="val">
+                          {gData.links.filter(l => 
+                            (typeof l.source === 'object' ? l.source.id : l.source) === activeNode.id || 
+                            (typeof l.target === 'object' ? l.target.id : l.target) === activeNode.id
+                          ).length}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
 
