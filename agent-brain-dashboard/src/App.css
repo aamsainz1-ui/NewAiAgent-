@@ -63,40 +63,108 @@ body {
   letter-spacing: 1px;
 }
 
-/* --- CONTROLS --- */
-.hud-controls {
+/* --- ADVANCED CONTROLS PANEL --- */
+.panel-toggle-btn {
   pointer-events: auto;
   position: absolute;
-  bottom: 30px;
-  right: 30px;
-  background: rgba(10, 10, 15, 0.8);
-  backdrop-filter: blur(12px);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 220px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  top: 20px;
+  right: 20px;
+  background: rgba(20, 20, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 20;
+  font-size: 0.8rem;
+  backdrop-filter: blur(5px);
+  transition: all 0.2s;
 }
 
-.control-group {
+.panel-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hud-controls-advanced {
+  pointer-events: auto;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: rgba(15, 15, 20, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 240px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  z-index: 10;
+}
+
+.hud-controls-advanced h3 {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  color: #a0a0ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.control-section {
+  margin-bottom: 15px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.control-group label {
-  font-size: 0.7rem;
+.control-section label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #bbb;
+  cursor: pointer;
+}
+
+.control-section input[type="checkbox"] {
+  accent-color: #4a80ff;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.slider-label {
+  font-size: 0.75rem;
   color: #888;
-  letter-spacing: 1px;
-  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
 }
 
 input[type=range] {
   width: 100%;
-  accent-color: #00ccff;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #a0a0ff;
+  cursor: pointer;
+}
+
+input[type=color] {
+  width: 100%;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
 }
 
 .hud-btn {
@@ -198,6 +266,18 @@ input[type=range] {
   color: #fff;
 }
 
+/* Custom Scrollbar for panel */
+.hud-controls-advanced::-webkit-scrollbar {
+  width: 6px;
+}
+.hud-controls-advanced::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2); 
+}
+.hud-controls-advanced::-webkit-scrollbar-thumb {
+  background: rgba(0, 204, 255, 0.5); 
+  border-radius: 3px;
+}
+
 /* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
   .hud-header {
@@ -212,17 +292,24 @@ input[type=range] {
   
   .hud-status { display: none; }
 
-  .hud-controls {
-    bottom: 20px;
-    right: 20px;
-    width: 160px;
+  .panel-toggle-btn {
+    top: 75px; /* Below the header */
+    right: 15px;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  .hud-controls-advanced {
+    top: 120px;
+    right: 15px;
+    width: 240px;
     padding: 15px;
   }
 
   .hud-detail-panel {
     bottom: 20px;
-    left: 20px;
-    right: 190px; /* Space for controls */
+    left: 15px;
+    right: 15px;
     width: auto;
     padding: 15px;
   }

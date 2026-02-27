@@ -54,10 +54,13 @@ function displayMonitor() {
   console.log(`${COLORS.bright}🔌 Provider Status${COLORS.reset}\n`);
   
   const providers = [
-    { name: 'Google Antigravity (aamsainz1)', status: 'Active', icon: '🟢', usage: 35 },
+    { name: 'Google Antigravity (aamsainz2)', status: 'Active', icon: '🟢', usage: 0 },
     { name: 'Google Antigravity (aamsainz3)', status: 'Standby', icon: '🟢', usage: 0 },
-    { name: 'Google Gemini CLI (aamsainz1)', status: 'Active', icon: '🟢', usage: 20 },
+    { name: 'Google Antigravity (aamsainz1)', status: 'Standby', icon: '🟢', usage: 35 },
+    { name: 'Google Gemini CLI (aamsainz2)', status: 'Active', icon: '🟢', usage: 0 },
     { name: 'Google Gemini CLI (aamsainz3)', status: 'Active', icon: '🟢', usage: 15 },
+    { name: 'Google Gemini CLI (aamsainz1)', status: 'Active', icon: '🟢', usage: 20 },
+    { name: 'Zhipu GLM (GLM-5)', status: 'Active', icon: '🟢', usage: 10 },
     { name: 'Minimax Portal (M2.5)', status: 'Free', icon: '🆓', usage: 0 },
     { name: 'Kimi Coding (K2.5)', status: 'Rate Limited', icon: '🟡', usage: 85 }
   ];
@@ -91,6 +94,12 @@ function displayMonitor() {
       cost: '$'
     },
     { 
+      name: 'Zhipu GLM-5 (Chinese)', 
+      models: ['zai/glm-5'],
+      usage: 10,
+      cost: '¥'
+    },
+    { 
       name: 'Minimax (Free)', 
       models: ['minimax-m2.5', 'minimax-m2.1'],
       usage: 5,
@@ -109,13 +118,15 @@ function displayMonitor() {
   console.log(`   1. ${COLORS.green}➤${COLORS.reset} claude-opus-4-6-thinking (Primary)`);
   console.log(`   2. ${COLORS.gray}○${COLORS.reset} claude-opus-4-6`);
   console.log(`   3. ${COLORS.gray}○${COLORS.reset} claude-sonnet-4-5`);
-  console.log(`   4. ${COLORS.gray}○${COLORS.reset} gemini-3-pro-preview`);
-  console.log(`   5. ${COLORS.gray}○${COLORS.reset} ${COLORS.magenta}minimax-m2.5 (FREE)${COLORS.reset}`);
-  console.log(`   6. ${COLORS.gray}○${COLORS.reset} kimi-k2p5 (Rate Limited)\n`);
+  console.log(`   4. ${COLORS.gray}○${COLORS.reset} zai/glm-5 (Chinese LLM)`);
+  console.log(`   5. ${COLORS.gray}○${COLORS.reset} gemini-3-pro-preview`);
+  console.log(`   6. ${COLORS.gray}○${COLORS.reset} ${COLORS.magenta}minimax-m2.5 (FREE)${COLORS.reset}`);
+  console.log(`   7. ${COLORS.gray}○${COLORS.reset} kimi-k2p5 (Rate Limited)\n`);
   
   // Recommendations
   console.log(`${COLORS.bright}💡 Recommendations${COLORS.reset}\n`);
   console.log(`   ${COLORS.green}✓${COLORS.reset} Use minimax-m2.5 for non-critical tasks (FREE)`);
+  console.log(`   ${COLORS.green}✓${COLORS.reset} Use zai/glm-5 for Chinese language tasks`);
   console.log(`   ${COLORS.green}✓${COLORS.reset} Both aamsainz1 & aamsainz3 are configured`);
   console.log(`   ${COLORS.yellow}⚠${COLORS.reset} Kimi API has rate limit - use as last resort`);
   console.log(`   ${COLORS.blue}ℹ${COLORS.reset} Current: Using aamsainz1 (Primary)\n`);

@@ -11,6 +11,7 @@
 - ตอบสั้น เข้าใจง่าย ประหยัด token
 - ปิด process/dev server ที่ไม่ใช้ทุกครั้งหลังทำงานเสร็จ
 - สลับ model แล้วต้องยึดกฎเดิมทุกข้อ ห้ามลืม
+- ⚠️ ห้ามเปลี่ยน Model Fallback Chain: ต้องยึด Minimax M2.5 (ฟรี) เป็นตัวหลัก ตามด้วย Sonnet -> Opus -> Gemini (aamsainz3) -> Zai (GLM-4.7) -> Kimi ทุกครั้งที่เปิด Session ใหม่ หรือรีเซ็ตระบบ
 
 ## DEC-2026-02-26-01
 type: decision
@@ -119,6 +120,7 @@ area: operations
 - 2026-02-15: Dashboard updates (แยกสีโหนด, pulse animation, graph controls), เพิ่ม GPT-4o ใน config, สนใจหา skill เพิ่ม (browser control)
 - 2026-02-16: ติดตั้ง browser skills 10 + business skills 18 ตัว, Dashboard overhaul + auto-generate script (112 nodes), Telegram group migration, Google Sheets live pull, UFAX9 business/team analysis, marketing plan, cron job update
 - 2026-02-17: verboseDefault off, cron fix (model+utf8), ลบ quick-summary, Dashboard orbital overhaul (PAPACLAW center, golden angle colors, category labels, orbital rotation, spread/edge controls)
+- 2026-02-27: จัดการปัญหา Browser Service ออฟไลน์, อัปเดต Model Fallback Chain เน้นประหยัด (Minimax เป็นหลัก) สลับใช้ aamsainz3 สำหรับ Gemini, และเพิ่ม zai/glm-4.7 (Backup API key) ใน config
 
 ## FACT-2026-02-16-01
 type: fact
@@ -194,3 +196,16 @@ Football Daily Analyst Skill:
 - Glossary: references/thai-football-glossary.md (100+ terms)
 - Next: การ์ดทีเด็ด (image), win rate tracking, SEO บทความ, สคริปต์คลิป TikTok
 - Cron: ยังไม่ตั้ง (รอ thinking.signature fix)
+
+## DEC-2026-02-27-01
+type: decision
+area: config
+
+อัปเดตระบบ Fallback Chain ของโมเดลเพื่อเน้นประหยัดต้นทุน:
+1. `minimax-portal/MiniMax-M2.5` (ฟรี - เริ่มต้น)
+2. `google-antigravity/claude-sonnet-4-5`
+3. `google-antigravity/claude-opus-4-6`
+4. `google-antigravity/claude-opus-4-6-thinking`
+5. `google-gemini-cli/gemini-3-pro-preview` (ใช้ aamsainz3 เป็นหลัก สลับเมื่อติด limit)
+6. `zai/glm-4.7` (+ Backup Keys: 477dc427..., e9273db4...)
+7. `kimi-coding/k2p5` (เก็บไว้ท้ายสุดเพราะติด Rate Limit บ่อย)
