@@ -11,7 +11,7 @@
 - ตอบสั้น เข้าใจง่าย ประหยัด token
 - ปิด process/dev server ที่ไม่ใช้ทุกครั้งหลังทำงานเสร็จ
 - สลับ model แล้วต้องยึดกฎเดิมทุกข้อ ห้ามลืม
-- ⚠️ ห้ามเปลี่ยน Model Fallback Chain: ต้องยึด Minimax M2.5 (ฟรี) เป็นตัวหลัก ตามด้วย Sonnet -> Opus -> Gemini (aamsainz3) -> Zai (GLM-4.7) -> Kimi ทุกครั้งที่เปิด Session ใหม่ หรือรีเซ็ตระบบ
+- ⚠️ ห้ามเปลี่ยน Model Fallback Chain: ต้องยึด Claude Sonnet 4.5 เป็นตัวหลัก ตามด้วย Opus -> Gemini (aamsainz3) -> Minimax M2.5 (ฟรี) -> Zai (GLM-4.7) -> Kimi ทุกครั้งที่เปิด Session ใหม่ หรือรีเซ็ตระบบ
 
 ## DEC-2026-02-26-01
 type: decision
