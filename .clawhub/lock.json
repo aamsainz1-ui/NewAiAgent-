@@ -4,6 +4,26 @@
     "tiktok-ads": {
       "version": "1.0.0",
       "installedAt": 1772130607796
+    },
+    "market-research": {
+      "version": "1.0.0",
+      "installedAt": 1772222401089
+    },
+    "parallel-ai-research": {
+      "version": "1.1.0",
+      "installedAt": 1772222482091
+    },
+    "rag-search": {
+      "version": "0.1.1",
+      "installedAt": 1772222959611
+    },
+    "deep-research-pro": {
+      "version": "1.0.2",
+      "installedAt": 1772223304134
+    },
+    "elite-longterm-memory": {
+      "version": "1.2.3",
+      "installedAt": 1772223309505
     }
   }
 }
