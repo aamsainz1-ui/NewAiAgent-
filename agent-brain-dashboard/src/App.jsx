@@ -467,38 +467,38 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Real-time updates
-  useEffect(() => {
-    if (isLoading) return;
-    
-    const activityInterval = setInterval(() => {
-      const newActivity = generateActivity();
-      setCurrentActivity(newActivity);
-      setActivityLog(prev => [newActivity, ...prev.slice(0, 9)]);
-    }, 3000);
+  // Real-time updates - DISABLED
+  // useEffect(() => {
+  //   if (isLoading) return;
+  //   
+  //   const activityInterval = setInterval(() => {
+  //     const newActivity = generateActivity();
+  //     setCurrentActivity(newActivity);
+  //     setActivityLog(prev => [newActivity, ...prev.slice(0, 9)]);
+  //   }, 3000);
 
-    const metricsInterval = setInterval(() => {
-      setMetrics(generateRealtimeMetrics());
-    }, 5000);
+  //   const metricsInterval = setInterval(() => {
+  //     setMetrics(generateRealtimeMetrics());
+  //   }, 5000);
 
-    const statusInterval = setInterval(() => {
-      const statuses = {};
-      gData.nodes.forEach(node => {
-        statuses[node.id] = {
-          status: Math.random() > 0.1 ? 'active' : 'idle',
-          lastActive: new Date().toISOString(),
-          load: Math.floor(Math.random() * 100)
-        };
-      });
-      setNodeStatuses(statuses);
-    }, 8000);
+  //   const statusInterval = setInterval(() => {
+  //     const statuses = {};
+  //     gData.nodes.forEach(node => {
+  //       statuses[node.id] = {
+  //         status: Math.random() > 0.1 ? 'active' : 'idle',
+  //         lastActive: new Date().toISOString(),
+  //         load: Math.floor(Math.random() * 100)
+  //       };
+  //     });
+  //     setNodeStatuses(statuses);
+  //   }, 8000);
 
-    return () => {
-      clearInterval(activityInterval);
-      clearInterval(metricsInterval);
-      clearInterval(statusInterval);
-    };
-  }, [isLoading]);
+  //   return () => {
+  //     clearInterval(activityInterval);
+  //     clearInterval(metricsInterval);
+  //     clearInterval(statusInterval);
+  //   };
+  // }, [isLoading]);
 
   // Physics configuration - FIXED for stability
   useEffect(() => {
