@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Brain 3D - Mobile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .brain-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 20px 0;
+        }
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #fff, 0 0 60px #fff;
+            z-index: 10;
+        }
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+        }
+        .ring1 { width: 100px; height: 100px; }
+        .ring2 { width: 150px; height: 150px; }
+        .ring3 { width: 200px; height: 200px; }
+        .ring4 { width: 250px; height: 250px; }
+        .node {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        .core { background: #fff; box-shadow: 0 0 10px #fff; }
+        .agent { background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+        .model { background: #00ccff; box-shadow: 0 0 10px #00ccff; }
+        .skill { background: #66ffaa; box-shadow: 0 0 10px #66ffaa; }
+        h1 { color: #0f0; font-size: 1.5rem; margin-bottom: 10px; }
+        p { color: #888; font-size: 0.9rem; margin-bottom: 5px; }
+        .info { margin-top: 30px; color: #666; font-size: 0.8rem; }
+        .desktop-msg { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+        }
+        .stat {
+            padding: 10px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid #0f0;
+            border-radius: 5px;
+        }
+        .stat-number { font-size: 1.2rem; color: #0f0; }
+        .stat-label { color: #888; }
+    </style>
+</head>
+<body>
+    <h1>🧠 AGENT BRAIN 3D</h1>
+    <p>Neural Network Visualization</p>
+    
+    <div class="brain-container">
+        <!-- Rings -->
+        <div class="ring ring1"></div>
+        <div class="ring ring2"></div>
+        <div class="ring ring3"></div>
+        <div class="ring ring4"></div>
+        
+        <!-- Center -->
+        <div class="center"></div>
+        
+        <!-- Nodes positioned around -->
+        <div class="node agent" style="width:20px;height:20px;top:35%;left:35%;"></div>
+        <div class="node agent" style="width:20px;height:20px;top:35%;left:65%;"></div>
+        <div class="node agent" style="width:20px;height:20px;top:65%;left:35%;"></div>
+        <div class="node agent" style="width:20px;height:20px;top:65%;left:65%;"></div>
+        
+        <div class="node model" style="width:15px;height:15px;top:25%;left:50%;"></div>
+        <div class="node model" style="width:15px;height:15px;top:50%;left:25%;"></div>
+        <div class="node model" style="width:15px;height:15px;top:50%;left:75%;"></div>
+        <div class="node model" style="width:15px;height:15px;top:75%;left:50%;"></div>
+        <div class="node model" style="width:15px;height:15px;top:30%;left:30%;"></div>
+        <div class="node model" style="width:15px;height:15px;top:30%;left:70%;"></div>
+        
+        <div class="node skill" style="width:10px;height:10px;top:20%;left:40%;"></div>
+        <div class="node skill" style="width:10px;height:10px;top:20%;left:60%;"></div>
+        <div class="node skill" style="width:10px;height:10px;top:80%;left:40%;"></div>
+        <div class="node skill" style="width:10px;height:10px;top:80%;left:60%;"></div>
+    </div>
+    
+    <div class="grid">
+        <div class="stat">
+            <div class="stat-number">463</div>
+            <div class="stat-label">TOTAL NODES</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">13</div>
+            <div class="stat-label">CATEGORIES</div>
+        </div>
+    </div>
+    
+    <div class="desktop-msg">
+        <p style="color:#0f0;">💻 Desktop Experience</p>
+        <p>For interactive 3D visualization,<br>please visit on a desktop browser.</p>
+    </div>
+    
+    <div class="info">
+        CORE • AGENTS • MODELS • SKILLS<br>
+        KNOWLEDGE • MEMORY • TOOLS
+    </div>
+</body>
+</html>
