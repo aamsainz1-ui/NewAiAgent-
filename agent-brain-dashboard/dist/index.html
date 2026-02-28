@@ -1,54 +1,154 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Brain 3D</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { 
-        width: 100%; 
-        height: 100%; 
-        background: #000; 
-        overflow: hidden;
-      }
-      #root { width: 100%; height: 100%; }
-    </style>
-    <!-- CRITICAL: Mobile redirect BEFORE anything else -->
-    <script>
-      (function() {
-        var ua = navigator.userAgent;
-        var isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document);
-        var isAndroid = /Android/i.test(ua);
-        var isMobile = isIOS || isAndroid || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-        var isSmallScreen = window.innerWidth < 768;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         
-        if (isMobile || isSmallScreen) {
-          // STOP everything and redirect
-          window.location.replace('https://agent-brain-dashboard.vercel.app/mobile.html');
-          throw new Error('Mobile redirect'); // Prevent further execution
+        /* Mobile view */
+        #mobile-view {
+            display: none;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+            text-align: center;
         }
-      })();
-    </script>
-    <script type="module" crossorigin src="/assets/index-DbEHbMgp.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-B_t-YkpR.css">
-  </head>
-  <body>
-    <div id="root">
-      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f0f11;">
-        <div style="text-align:center;color:#fff;">
-          <div style="border:4px solid rgba(255,255,255,0.1);border-left-color:#00f0ff;width:40px;height:40px;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 15px;"></div>
-          <div style="font-size:1.2rem;color:#ccc;">LOADING BRAIN...</div>
-        </div>
-      </div>
-    </div>
+        #mobile-view h1 { color: #0f0; margin-bottom: 10px; font-size: 24px; }
+        #mobile-view .subtitle { color: #888; margin-bottom: 40px; }
+        #mobile-view .circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 40px;
+            border: 3px solid #0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #mobile-view .circle-inner {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        #mobile-view .stats { margin-bottom: 30px; }
+        #mobile-view .stat {
+            display: inline-block;
+            background: rgba(0,255,0,0.2);
+            border: 1px solid #0f0;
+            padding: 15px 25px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        #mobile-view .stat-num { color: #0f0; font-size: 24px; font-weight: bold; display: block; }
+        #mobile-view .stat-label { color: #888; font-size: 12px; }
+        #mobile-view .msg {
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+        #mobile-view .msg-title { color: #0f0; margin-bottom: 10px; }
+        #mobile-view .msg-text { color: #888; font-size: 14px; }
+        #mobile-view .footer { color: #666; font-size: 12px; margin-top: 30px; }
+        
+        /* Desktop view */
+        #desktop-view {
+            display: none;
+            background: #0f0f11;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #desktop-view .loading {
+            text-align: center;
+        }
+        #desktop-view .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-left-color: #00f0ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
     
+    <script>
+        (function() {
+            var ua = navigator.userAgent;
+            var isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document);
+            var isAndroid = /Android/i.test(ua);
+            var isMobile = isIOS || isAndroid || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+            var isSmallScreen = window.innerWidth < 768;
+            
+            // Show correct view immediately
+            if (isMobile || isSmallScreen) {
+                document.documentElement.className = 'mobile';
+            } else {
+                document.documentElement.className = 'desktop';
+            }
+        })();
+    </script>
     
     <style>
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        html.mobile #mobile-view { display: block !important; }
+        html.desktop #desktop-view { display: flex !important; }
     </style>
-  </body>
+  <script type="module" crossorigin src="/assets/index-C-p5UOHO.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DP25F-Nh.css">
+</head>
+<body>
+
+    <!-- Mobile View -->
+    <div id="mobile-view">
+        <h1>🧠 AGENT BRAIN 3D</h1>
+        <p class="subtitle">Neural Network Visualization</p>
+        
+        <div class="circle">
+            <div class="circle-inner"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-num">463</span>
+                <span class="stat-label">NODES</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">13</span>
+                <span class="stat-label">CATEGORIES</span>
+            </div>
+        </div>
+        
+        <div class="msg">
+            <div class="msg-title">💻 Desktop Experience</div>
+            <div class="msg-text">
+                For interactive 3D,<br>
+                please visit on desktop.
+            </div>
+        </div>
+        
+        <p class="footer">
+            CORE • AGENTS • MODELS • SKILLS<br>
+            KNOWLEDGE • MEMORY • TOOLS
+        </p>
+    </div>
+
+    <!-- Desktop View -->
+    <div id="desktop-view">
+        <div class="loading">
+            <div class="spinner"></div>
+            <div style="color: #ccc;">LOADING BRAIN...</div>
+        </div>
+    </div>
+
+</body>
 </html>
