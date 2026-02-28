@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 import * as THREE from 'three';
@@ -393,45 +393,6 @@ const categoryColors = {
   'VECTOR': '#6666ff'
 };
 
-// Generate high-density neural nodes
-const generateNeuralNodes = (count = 150) => {
-  const neuralNodes = [];
-  const categories = ['NEURAL', 'SYNAPSE', 'NEURON', 'PATHWAY', 'IMPULSE'];
-  
-  for (let i = 0; i < count; i++) {
-    neuralNodes.push({
-      id: `neural_${i}`,
-      group: Math.floor(Math.random() * 5) + 11,
-      label: `${categories[Math.floor(Math.random() * categories.length)]}_${i}`,
-      desc: `Neural pathway connection node`,
-      val: Math.random() * 5 + 3,
-      category: 'NEURAL'
-    });
-  }
-  return neuralNodes;
-};
-
-// Generate neural connections
-const generateNeuralLinks = (baseNodes, neuralNodes) => {
-  const links = [];
-  const coreNodes = baseNodes.filter(n => n.group <= 2);
-  
-  neuralNodes.forEach((node, i) => {
-    // Connect to core nodes
-    if (Math.random() > 0.6) {
-      const target = coreNodes[Math.floor(Math.random() * coreNodes.length)];
-      links.push({ source: node.id, target: target.id });
-    }
-    // Connect to other neural nodes
-    if (i > 0 && Math.random() > 0.8) {
-      const targetIndex = Math.floor(Math.random() * i);
-      links.push({ source: node.id, target: neuralNodes[targetIndex].id });
-    }
-  });
-  
-  return links;
-};
-
 // Real-time activity feed
 const ACTIVITY_TEMPLATES = [
   { agent: "NEXUS", actions: ["Running healthcheck", "Deploying update", "Monitoring logs", "Scaling resources"] },
@@ -519,33 +480,31 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Physics configuration - Brain structure with centripetal force
+  // Physics configuration - FIXED for stability
   useEffect(() => {
     if (!fgRef.current || isLoading) return;
     
-    // Brain structure physics - centripetal force for neural clustering
-    fgRef.current.d3Force('charge').strength(-80);
-    fgRef.current.d3Force('center', null);
+    // Configure physics with reduced repulsion and stronger center force
+    fgRef.current.d3Force('charge').strength(-30); // Reduced from -120
+    fgRef.current.d3Force('center', null); // Remove default center
     fgRef.current.d3Force('x', null);
     fgRef.current.d3Force('y', null);
     fgRef.current.d3Force('z', null);
     
-    // Strong center force for brain-like clustering
-    fgRef.current.d3Force('center', fgRef.current.d3Force('center').strength(0.08));
-    fgRef.current.d3Force('collide', fgRef.current.d3Force('collide')?.radius(d => d.val * 0.6).strength(0.8));
+    // Add custom forces using native d3-force from force-graph
+    fgRef.current.d3Force('center', fgRef.current.d3Force('center').strength(0.05));
+    fgRef.current.d3Force('collide', fgRef.current.d3Force('collide')?.radius(d => d.val * 0.5).strength(0.5));
     
-    // Brain structure settings
-    fgRef.current.d3AlphaDecay(0.02);
-    fgRef.current.d3VelocityDecay(0.4);
-    fgRef.current.warmupTicks(100);
-    fgRef.current.cooldownTicks(200);
+    // Simulation settings
+    fgRef.current.d3AlphaDecay(0.05); // Faster settle
+    fgRef.current.d3VelocityDecay(0.3); // More damping
+    fgRef.current.warmupTicks(50);
+    fgRef.current.cooldownTicks(100);
     
     // Initial camera position
     setTimeout(() => {
-      if (fgRef.current) {
-        fgRef.current.cameraPosition({ x: 300, y: 150, z: 400 }, { x: 0, y: 0, z: 0 }, 2000);
-      }
-    }, 500);
+      fgRef.current.cameraPosition({ x: 200, y: 100, z: 300 }, { x: 0, y: 0, z: 0 }, 1000);
+    }, 100);
   }, [isLoading]);
 
   // Smooth camera rotation
@@ -657,22 +616,15 @@ export default function App() {
     return validIds.has(s) && validIds.has(t);
   });
   
-  // Add neural nodes for high density
-  const neuralNodes = useMemo(() => generateNeuralNodes(150), []);
-  const neuralLinks = useMemo(() => generateNeuralLinks(gData.nodes, neuralNodes), [neuralNodes]);
-  
-  const allNodes = [...gData.nodes, ...neuralNodes];
-  const allLinks = [...cleanLinks, ...neuralLinks];
-  
   const safeGData = {
-    nodes: allNodes.map((n, i) => ({
+    nodes: gData.nodes.map((n, i) => ({
       ...n,
       // Pre-position nodes in clusters to reduce explosion
-      x: Math.cos(i * 0.3) * (50 + (n.group || 0) * 25) + (Math.random() - 0.5) * 30,
-      y: Math.sin(i * 0.3) * (50 + (n.group || 0) * 25) + (Math.random() - 0.5) * 30,
-      z: (Math.random() - 0.5) * 50
+      x: Math.cos(i * 0.5) * (50 + (n.group || 0) * 30) + (Math.random() - 0.5) * 20,
+      y: Math.sin(i * 0.5) * (50 + (n.group || 0) * 30) + (Math.random() - 0.5) * 20,
+      z: (Math.random() - 0.5) * 40
     })),
-    links: allLinks
+    links: cleanLinks
   };
 
   const graphData = activeFilter === 'ALL' ? safeGData : {
@@ -915,113 +867,58 @@ export default function App() {
           nodeResolution={16}
           nodeThreeObjectExtend={true}
           nodeThreeObject={node => {
-            // Create enhanced glowing sphere with aura layers
-            const group = new THREE.Group();
-            const baseSize = node.val * 0.5 * nodeSize;
-            const color = colors[node.group] || '#ffffff';
-            
-            // Core sphere - high emissive
-            const coreGeometry = new THREE.SphereGeometry(baseSize * 0.6, 32, 32);
-            const coreMaterial = new THREE.MeshStandardMaterial({
-              color: color,
-              emissive: color,
-              emissiveIntensity: glowIntensity * 2,
-              roughness: 0.2,
-              metalness: 0.9
+            // Create glowing sphere
+            const geometry = new THREE.SphereGeometry(node.val * 0.5 * nodeSize, 16, 16);
+            const material = new THREE.MeshStandardMaterial({
+              color: colors[node.group],
+              emissive: colors[node.group],
+              emissiveIntensity: glowIntensity,
+              roughness: 0.3,
+              metalness: 0.7
             });
-            const core = new THREE.Mesh(coreGeometry, coreMaterial);
-            group.add(core);
+            const sphere = new THREE.Mesh(geometry, material);
             
-            // Inner aura layer
-            const innerGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 1.0, 32, 32),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.25
-              })
-            );
-            group.add(innerGlow);
-            
-            // Middle aura layer
-            const middleGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 1.4, 32, 32),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.12
-              })
-            );
-            group.add(middleGlow);
-            
-            // Outer atmospheric aura
-            const outerGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 2.0, 32, 32),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.05
-              })
-            );
-            group.add(outerGlow);
-            
-            // Halo ring
-            const ringGeometry = new THREE.RingGeometry(baseSize * 2.2, baseSize * 2.3, 64);
-            const ringMaterial = new THREE.MeshBasicMaterial({
-              color: color,
+            // Add outer glow
+            const glowGeometry = new THREE.SphereGeometry(node.val * 0.8 * nodeSize, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+              color: colors[node.group],
               transparent: true,
-              opacity: 0.08,
-              side: THREE.DoubleSide
+              opacity: 0.15
             });
-            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-            ring.lookAt(0, 0, 1);
-            group.add(ring);
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            sphere.add(glow);
             
             // Add label if enabled
             if (showLabels) {
               const sprite = new SpriteText(node.label);
               sprite.color = 'rgba(255,255,255,0.9)';
               sprite.textHeight = 3 * nodeSize;
-              sprite.position.y = baseSize * 2.8;
-              group.add(sprite);
+              sprite.position.y = node.val * nodeSize * 1.5;
+              sphere.add(sprite);
             }
             
-            return group;
+            return sphere;
           }}
           linkWidth={0.5}
           linkOpacity={linkOpacity}
           linkColor={() => `rgba(100,150,255,${linkOpacity})`}
           linkDirectionalArrowLength={3}
           linkDirectionalArrowRelPos={1}
-          // Neural Pulse Effect - animated particles on links
-          linkDirectionalParticles={4}
-          linkDirectionalParticleSpeed={0.008}
-          linkDirectionalParticleWidth={2}
-          linkDirectionalParticleColor={() => '#00ffff'}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
           backgroundColor="#000000"
         />
       </div>
 
-      {/* HUD - Sci-Fi Interface */}
-      <div style={{ position: 'fixed', top: 0, left: isSideMenuOpen ? '320px' : '0', right: 0, pointerEvents: 'none', zIndex: 50 }}>
-        {/* Header - Sci-Fi Style */}
+      {/* HUD */}
+      <div style={{ position: 'fixed', top: 0, left: isSideMenuOpen ? '320px' : '0', right: 0, pointerEvents: 'none' }}>
+        {/* Header */}
         <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ 
-            background: 'linear-gradient(135deg, rgba(0,20,40,0.9), rgba(0,10,20,0.95))',
-            padding: '15px 25px',
-            borderRadius: '8px',
-            border: '1px solid rgba(0,255,200,0.3)',
-            boxShadow: '0 0 30px rgba(0,255,200,0.1), inset 0 0 20px rgba(0,255,200,0.05)'
-          }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fff', letterSpacing: '2px', textShadow: '0 0 10px rgba(0,255,200,0.5)' }}>
-              NEURAL<span style={{ color: '#00ffc8' }}>//</span>OS
+          <div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>
+              OpenClaw<span style={{ color: '#0f0' }}>//OS</span> <span style={{ fontSize: '0.6rem', color: '#f00' }}>v5.1</span>
             </div>
-            <div style={{ fontSize: '0.7rem', color: '#00ffc8', marginTop: '8px', letterSpacing: '3px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ width: '6px', height: '6px', background: '#00ff66', borderRadius: '50%', animation: 'pulse 1.5s infinite', boxShadow: '0 0 10px #00ff66' }}></span>
-              ONLINE • {graphData.nodes.length} NEURAL NODES
-            </div>
+            <div style={{ fontSize: '0.8rem', color: '#0f0', marginTop: '5px' }}>ONLINE • {graphData.nodes.length} MODULES</div>
           </div>
         </div>
 
