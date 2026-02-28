@@ -442,6 +442,43 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
 
+  // Mobile detection - show desktop only message
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+  
+  if (isMobile) {
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#000',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontFamily: 'monospace',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🧠</div>
+        <div style={{ fontSize: '1.5rem', marginBottom: '10px', color: '#0f0' }}>
+          AGENT BRAIN 3D
+        </div>
+        <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px' }}>
+          Desktop Browser Required
+        </div>
+        <div style={{ fontSize: '0.9rem', color: '#666', maxWidth: '300px', lineHeight: '1.6' }}>
+          This 3D visualization requires WebGL and a larger screen.
+          <br /><br />
+          Please open on a desktop computer for the full experience.
+        </div>
+        <div style={{ marginTop: '40px', fontSize: '0.8rem', color: '#444' }}>
+          463 Neural Nodes • 13 Categories
+        </div>
+      </div>
+    );
+  }
+
   // Loading progress simulation
   useEffect(() => {
     let progress = 0;
