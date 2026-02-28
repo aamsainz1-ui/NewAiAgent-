@@ -2,8 +2,64 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 import * as THREE from 'three';
-import { useWebSocket } from './useWebSocket';
 import './App.css';
+
+// Simple 2D fallback component for mobile
+function SimpleGraphFallback({ nodes, links, colors }) {
+  return (
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      background: '#000',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#0f0',
+      fontFamily: 'monospace',
+      padding: '20px'
+    }}>
+      <div style={{ fontSize: '1.5rem', marginBottom: '20px' }}>🧠 AGENT BRAIN NETWORK</div>
+      <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px', textAlign: 'center' }}>
+        3D visualization requires desktop browser<br/>
+        Showing simplified view:
+      </div>
+      
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '15px',
+        maxWidth: '400px',
+        width: '100%'
+      }}>
+        {Object.entries(
+          nodes.reduce((acc, n) => {
+            acc[n.category] = (acc[n.category] || 0) + 1;
+            return acc;
+          }, {})
+        ).map(([cat, count]) => (
+          <div key={cat} style={{
+            background: 'rgba(0,255,0,0.1)',
+            border: '1px solid #0f0',
+            borderRadius: '8px',
+            padding: '15px',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{count}</div>
+            <div style={{ fontSize: '0.8rem', color: '#888' }}>{cat}</div>
+          </div>
+        ))}
+      </div>
+      
+      <div style={{ marginTop: '30px', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
+        Total: {nodes.length} nodes • {links.length} connections<br/>
+        <a href="https://agent-brain-dashboard.vercel.app" style={{ color: '#0f0' }} target="_blank">
+          Open on desktop for full 3D experience →
+        </a>
+      </div>
+    </div>
+  );
+}
 
 const gData = {
   nodes: [
@@ -783,37 +839,14 @@ export default function App() {
     );
   }
 
-  // WebGL not supported fallback
-  if (!webGLSupported) {
-    return (
-      <div style={{
-        width: '100vw',
-        height: '100vh',
-        background: '#000000',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
-        fontFamily: 'monospace',
-        padding: '20px',
-        textAlign: 'center'
-      }}>
-        <div style={{ fontSize: '2rem', marginBottom: '20px', color: '#ff4444' }}>
-          ⚠️ WEBGL NOT SUPPORTED
-        </div>
-        <div style={{ fontSize: '1rem', color: '#aaa', maxWidth: '400px', lineHeight: '1.6' }}>
-          Your device or browser does not support WebGL, which is required for the 3D neural visualization.
-          <br /><br />
-          Please try:
-          <ul style={{ textAlign: 'left', color: '#888' }}>
-            <li>Using a desktop browser (Chrome, Firefox, Safari)</li>
-            <li>Enabling hardware acceleration</li>
-            <li>Updating your browser</li>
-          </ul>
-        </div>
-      </div>
-    );
+  // WebGL not supported fallback - TEMP DISABLED
+  // if (!webGLSupported) {
+  //   return (fallback UI)
+  // }
+
+  // Mobile fallback - show 2D summary instead of 3D
+  if (isMobileDevice) {
+    return <SimpleGraphFallback nodes={gData.nodes} links={gData.links} colors={colors} />;
   }
 
   return (
@@ -980,60 +1013,42 @@ export default function App() {
           <div>WebGL: {webGLSupported ? 'Yes' : 'No'}</div>
         </div>
 
-        {dimensions.width > 0 && dimensions.height > 0 && graphData.nodes.length > 0 && (
+        {dimensions.width > 0 && dimensions.height > 0 && graphData.nodes.length > 0 ? (
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
-          warmupTicks={50}
-          cooldownTicks={100}
+          warmupTicks={20}
+          cooldownTicks={50}
           width={isSideMenuOpen ? dimensions.width - 320 : dimensions.width}
           height={dimensions.height}
-          nodeRelSize={6}
+          nodeRelSize={8}
           nodeColor={node => colors[node.group] || '#ffffff'}
-          nodeVal={node => node.val}
-          nodeResolution={isMobileDevice ? 8 : 16}
-          nodeThreeObject={node => {
-            const size = (node.val || 10) * 0.8;
-            const color = colors[node.group] || '#ffffff';
-            
-            if (isMobileDevice) {
-              const geometry = new THREE.SphereGeometry(size, 8, 8);
-              const material = new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.9
-              });
-              return new THREE.Mesh(geometry, material);
-            }
-            
-            const group = new THREE.Group();
-            
-            const core = new THREE.Mesh(
-              new THREE.SphereGeometry(size, 16, 16),
-              new THREE.MeshBasicMaterial({ color: color })
-            );
-            group.add(core);
-            
-            const glow = new THREE.Mesh(
-              new THREE.SphereGeometry(size * 1.5, 16, 16),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.2
-              })
-            );
-            group.add(glow);
-            
-            return group;
-          }}
+          nodeVal={node => node.val || 10}
+          nodeResolution={8}
           linkWidth={1}
-          linkColor={() => 'rgba(100,200,255,0.4)'}
+          linkColor={() => 'rgba(100,200,255,0.5)'}
           linkDirectionalArrowLength={0}
           linkDirectionalParticles={0}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
           backgroundColor="#000000"
         />
+        ) : (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: '#ff4444',
+            fontSize: '1.5rem',
+            textAlign: 'center'
+          }}>
+            ⚠️ Cannot render graph
+            <div style={{ fontSize: '1rem', color: '#888', marginTop: '10px' }}>
+              Dimensions: {dimensions.width}x{dimensions.height}<br/>
+              Nodes: {graphData.nodes.length}
+            </div>
+          </div>
         )}
       </div>
 
