@@ -9,71 +9,67 @@
     <meta http-equiv="Expires" content="0" />
     <title>Agent Brain 3D</title>
     <style>
-      body { 
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { 
+        width: 100%; 
+        height: 100%; 
         background: #000; 
-        margin: 0; 
-        color: #fff; 
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      #desktop-view {
+        width: 100%;
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh;
       }
-      #mobile-msg {
+      .loading {
         text-align: center;
-        padding: 20px;
+        color: #fff;
       }
-      h1 { color: #0f0; font-size: 24px; margin-bottom: 10px; }
-      p { color: #888; font-size: 16px; }
-      a { color: #0f0; text-decoration: underline; }
+      .spinner {
+        border: 4px solid rgba(255,255,255,0.1);
+        border-left-color: #00f0ff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+      @keyframes spin { 
+        0% { transform: rotate(0deg); } 
+        100% { transform: rotate(360deg); } 
+      }
     </style>
-    <!-- Mobile redirect - IMMEDIATE -->
-    <script>
-      (function() {
-        var ua = navigator.userAgent;
-        // iOS detection includes iPhone, iPad, iPod + iPad Pro (which reports as Macintosh)
-        var isIOS = /iPhone|iPad|iPod/i.test(ua) || 
-                    (ua.includes('Macintosh') && 'ontouchend' in document);
-        var isAndroid = /Android/i.test(ua);
-        var isMobile = isIOS || isAndroid || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-        var isSmallScreen = window.innerWidth < 768;
-        
-        // Debug: log to console
-        console.log('UA:', ua);
-        console.log('isIOS:', isIOS);
-        console.log('isMobile:', isMobile);
-        console.log('isSmallScreen:', isSmallScreen);
-        
-        if (isMobile || isSmallScreen) {
-          // Force redirect with cache-busting
-          window.location.replace('https://agent-brain-dashboard.vercel.app/mobile.html?t=' + Date.now());
-        }
-      })();
-    </script>
-    <script type="module" crossorigin src="/assets/index-D8Ps8vn1.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DnrktXkD.css">
   </head>
   <body>
-    <!-- Fallback for non-JS or if redirect fails -->
-    <noscript>
-      <div id="mobile-msg">
-        <h1>🧠 AGENT BRAIN 3D</h1>
-        <p>Mobile view: <a href="/mobile.html">Click here</a></p>
-      </div>
-    </noscript>
-    
-    <!-- Desktop loading screen -->
-    <div id="root">
-      <div style="text-align: center;">
-        <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: #00f0ff; width: 40px; height: 40px; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+    <div id="desktop-view">
+      <div class="loading">
+        <div class="spinner"></div>
         <div style="font-size: 1.2rem; color: #ccc;">LOADING BRAIN...</div>
       </div>
     </div>
     
-    
-    <style>
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    <script>
+      (function() {
+        var ua = navigator.userAgent;
+        var isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document);
+        var isAndroid = /Android/i.test(ua);
+        var isMobile = isIOS || isAndroid || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        var isSmallScreen = window.innerWidth < 768;
+        
+        if (isMobile || isSmallScreen) {
+          // Mobile: redirect immediately, DON'T load React
+          window.location.replace('https://agent-brain-dashboard.vercel.app/mobile.html');
+        } else {
+          // Desktop: load React app
+          var script = document.createElement('script');
+          script.type = 'module';
+          script.src = '/src/main.jsx';
+          document.body.appendChild(script);
+        }
+      })();
+    </script>
   </body>
 </html>
