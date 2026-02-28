@@ -432,7 +432,20 @@ const generateNeuralLinks = (baseNodes, neuralNodes) => {
   return links;
 };
 
-// Real-time activity feed
+// Detect mobile device
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+};
+
+// Check WebGL support
+const checkWebGL = () => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+  } catch {
+    return false;
+  }
+};
 const ACTIVITY_TEMPLATES = [
   { agent: "NEXUS", actions: ["Running healthcheck", "Deploying update", "Monitoring logs", "Scaling resources"] },
   { agent: "PULSE", actions: ["Analyzing TikTok trends", "Checking viral content", "Updating ad bids", "Scanning hashtags"] },
@@ -482,6 +495,16 @@ export default function App() {
   const [sphereMode, setSphereMode] = useState(false);
   const [glowIntensity, setGlowIntensity] = useState(0.6);
   
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [webGLSupported, setWebGLSupported] = useState(true);
+  const [renderError, setRenderError] = useState(null);
+  
+  // Check device capabilities on mount
+  useEffect(() => {
+    setIsMobileDevice(isMobile());
+    setWebGLSupported(checkWebGL());
+  }, []);
+
   // WebSocket connection for real-time data
   const { 
     isConnected, 
@@ -657,8 +680,9 @@ export default function App() {
     return validIds.has(s) && validIds.has(t);
   });
   
-  // Add neural nodes for high density
-  const neuralNodes = useMemo(() => generateNeuralNodes(150), []);
+  // Add neural nodes for high density - reduce count on mobile
+  const neuralCount = isMobileDevice ? 30 : 150;
+  const neuralNodes = useMemo(() => generateNeuralNodes(neuralCount), [neuralCount]);
   const neuralLinks = useMemo(() => generateNeuralLinks(gData.nodes, neuralNodes), [neuralNodes]);
   
   const allNodes = [...gData.nodes, ...neuralNodes];
@@ -754,6 +778,39 @@ export default function App() {
         </div>
         <div style={{ marginTop: '10px', fontSize: '0.9rem', color: '#888' }}>
           {Math.round(loadingProgress)}%
+        </div>
+      </div>
+    );
+  }
+
+  // WebGL not supported fallback
+  if (!webGLSupported) {
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#000000',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontFamily: 'monospace',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '2rem', marginBottom: '20px', color: '#ff4444' }}>
+          ⚠️ WEBGL NOT SUPPORTED
+        </div>
+        <div style={{ fontSize: '1rem', color: '#aaa', maxWidth: '400px', lineHeight: '1.6' }}>
+          Your device or browser does not support WebGL, which is required for the 3D neural visualization.
+          <br /><br />
+          Please try:
+          <ul style={{ textAlign: 'left', color: '#888' }}>
+            <li>Using a desktop browser (Chrome, Firefox, Safari)</li>
+            <li>Enabling hardware acceleration</li>
+            <li>Updating your browser</li>
+          </ul>
         </div>
       </div>
     );
@@ -915,7 +972,18 @@ export default function App() {
           nodeResolution={16}
           nodeThreeObjectExtend={true}
           nodeThreeObject={node => {
-            // Create enhanced glowing sphere with aura layers
+            // Mobile: use simple sphere, Desktop: use enhanced glow
+            if (isMobileDevice) {
+              const geometry = new THREE.SphereGeometry(node.val * 0.5 * nodeSize, 8, 8);
+              const material = new THREE.MeshBasicMaterial({
+                color: colors[node.group],
+                transparent: true,
+                opacity: 0.9
+              });
+              return new THREE.Mesh(geometry, material);
+            }
+            
+            // Desktop: enhanced glowing sphere with aura layers
             const group = new THREE.Group();
             const baseSize = node.val * 0.5 * nodeSize;
             const color = colors[node.group] || '#ffffff';
@@ -988,13 +1056,13 @@ export default function App() {
             
             return group;
           }}
-          linkWidth={0.5}
+          linkWidth={isMobileDevice ? 1 : 0.5}
           linkOpacity={linkOpacity}
           linkColor={() => `rgba(100,150,255,${linkOpacity})`}
-          linkDirectionalArrowLength={3}
+          linkDirectionalArrowLength={isMobileDevice ? 0 : 3}
           linkDirectionalArrowRelPos={1}
-          // Neural Pulse Effect - animated particles on links
-          linkDirectionalParticles={4}
+          // Neural Pulse Effect - disabled on mobile for performance
+          linkDirectionalParticles={isMobileDevice ? 0 : 4}
           linkDirectionalParticleSpeed={0.008}
           linkDirectionalParticleWidth={2}
           linkDirectionalParticleColor={() => '#00ffff'}
