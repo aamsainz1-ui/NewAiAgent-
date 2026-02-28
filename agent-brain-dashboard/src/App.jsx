@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
+import * as THREE from 'three';
 import { useWebSocket } from './useWebSocket';
 import './App.css';
 
@@ -439,6 +440,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
   const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [sphereMode, setSphereMode] = useState(false);
+  const [glowIntensity, setGlowIntensity] = useState(0.6);
   
   // WebSocket connection for real-time data
   const { 
@@ -573,6 +576,33 @@ export default function App() {
       requestAnimationFrame(animateCamera);
     }
   }, []);
+
+  // Sphere mode effect - arrange nodes in spherical pattern
+  useEffect(() => {
+    if (!fgRef.current || isLoading) return;
+    
+    if (sphereMode) {
+      // Apply spherical layout
+      const nodes = graphData.nodes;
+      const radius = 200;
+      const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+      
+      nodes.forEach((node, i) => {
+        const y = 1 - (i / (nodes.length - 1)) * 2;
+        const radiusAtY = Math.sqrt(1 - y * y) * radius;
+        const theta = phi * i;
+        
+        node.x = radiusAtY * Math.cos(theta);
+        node.y = y * radius;
+        node.z = radiusAtY * Math.sin(theta);
+      });
+      
+      fgRef.current.refresh();
+    } else {
+      // Reset to force-directed layout
+      fgRef.current.d3ReheatSimulation();
+    }
+  }, [sphereMode, isLoading]);
 
   const safeGetGroup = (nodeId) => {
     const node = gData.nodes.find(n => n.id === nodeId);
@@ -837,14 +867,40 @@ export default function App() {
           nodeResolution={16}
           nodeThreeObjectExtend={true}
           nodeThreeObject={node => {
-            if (!showLabels) return null;
-            const sprite = new SpriteText(node.label);
-            sprite.color = 'rgba(255,255,255,0.9)';
-            sprite.textHeight = 3 * nodeSize;
-            sprite.position.y = 10 * nodeSize;
-            return sprite;
+            // Create glowing sphere
+            const geometry = new THREE.SphereGeometry(node.val * 0.5 * nodeSize, 16, 16);
+            const material = new THREE.MeshStandardMaterial({
+              color: colors[node.group],
+              emissive: colors[node.group],
+              emissiveIntensity: glowIntensity,
+              roughness: 0.3,
+              metalness: 0.7
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            
+            // Add outer glow
+            const glowGeometry = new THREE.SphereGeometry(node.val * 0.8 * nodeSize, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+              color: colors[node.group],
+              transparent: true,
+              opacity: 0.15
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            sphere.add(glow);
+            
+            // Add label if enabled
+            if (showLabels) {
+              const sprite = new SpriteText(node.label);
+              sprite.color = 'rgba(255,255,255,0.9)';
+              sprite.textHeight = 3 * nodeSize;
+              sprite.position.y = node.val * nodeSize * 1.5;
+              sphere.add(sprite);
+            }
+            
+            return sphere;
           }}
           linkWidth={0.5}
+          linkOpacity={linkOpacity}
           linkColor={() => `rgba(100,150,255,${linkOpacity})`}
           linkDirectionalArrowLength={3}
           linkDirectionalArrowRelPos={1}
@@ -980,9 +1036,34 @@ export default function App() {
             </div>
 
             <h4 style={{ color: '#666', fontSize: '0.7rem', marginBottom: '8px' }}>CONTROLS</h4>
+            
+            {/* Sphere Mode Toggle */}
+            <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ color: '#aaa', fontSize: '0.75rem' }}>🎯 Sphere Mode</span>
+                <button
+                  onClick={() => setSphereMode(!sphereMode)}
+                  style={{
+                    background: sphereMode ? '#0f0' : 'transparent',
+                    color: sphereMode ? '#000' : '#0f0',
+                    border: '1px solid #0f0',
+                    padding: '4px 12px',
+                    borderRadius: '4px',
+                    fontSize: '0.7rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {sphereMode ? 'ON' : 'OFF'}
+                </button>
+              </div>
+              <div style={{ fontSize: '0.65rem', color: '#666' }}>
+                {sphereMode ? 'Nodes arranged in 3D sphere' : 'Free-form graph layout'}
+              </div>
+            </div>
+            
             <div style={{ marginBottom: '10px' }}>
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Node Size: {nodeSize.toFixed(1)}</label>
-              <input type="range" min="0.5" max="2" step="0.1" value={nodeSize} onChange={e => setNodeSize(parseFloat(e.target.value))} style={{ width: '100%' }} />
+              <input type="range" min="0.5" max="3" step="0.1" value={nodeSize} onChange={e => setNodeSize(parseFloat(e.target.value))} style={{ width: '100%' }} />
             </div>
             <div style={{ marginBottom: '10px' }}>
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Rotation: {rotationSpeed.toFixed(1)}</label>
@@ -992,6 +1073,12 @@ export default function App() {
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Link Opacity: {linkOpacity.toFixed(1)}</label>
               <input type="range" min="0" max="1" step="0.1" value={linkOpacity} onChange={e => setLinkOpacity(parseFloat(e.target.value))} style={{ width: '100%' }} />
             </div>
+            
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Glow Intensity: {glowIntensity.toFixed(1)}</label>
+              <input type="range" min="0" max="1" step="0.1" value={glowIntensity} onChange={e => setGlowIntensity(parseFloat(e.target.value))} style={{ width: '100%' }} />
+            </div>
+            
             <label style={{ color: '#aaa', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input type="checkbox" checked={showLabels} onChange={e => setShowLabels(e.target.checked)} /> Show Labels
             </label>
