@@ -32,8 +32,18 @@
     <script>
       (function() {
         var ua = navigator.userAgent;
-        var isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        // iOS detection includes iPhone, iPad, iPod + iPad Pro (which reports as Macintosh)
+        var isIOS = /iPhone|iPad|iPod/i.test(ua) || 
+                    (ua.includes('Macintosh') && 'ontouchend' in document);
+        var isAndroid = /Android/i.test(ua);
+        var isMobile = isIOS || isAndroid || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         var isSmallScreen = window.innerWidth < 768;
+        
+        // Debug: log to console
+        console.log('UA:', ua);
+        console.log('isIOS:', isIOS);
+        console.log('isMobile:', isMobile);
+        console.log('isSmallScreen:', isSmallScreen);
         
         if (isMobile || isSmallScreen) {
           // Force redirect with cache-busting
