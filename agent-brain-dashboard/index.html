@@ -4,17 +4,78 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="version" content="v7.6" />
+    <meta name="version" content="v7.7" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Agent Brain 3D</title>
     <style>
-      body { background-color: #0f0f11; margin: 0; color: white; font-family: sans-serif; overflow: hidden; }
+      body { 
+        background-color: #000; 
+        margin: 0; 
+        color: white; 
+        font-family: monospace; 
+        min-height: 100vh;
+      }
+      #root { min-height: 100vh; }
+      /* Mobile debug overlay */
+      #debug-info {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: rgba(255,0,0,0.9);
+        color: #fff;
+        padding: 10px;
+        z-index: 99999;
+        font-size: 12px;
+        font-family: monospace;
+        max-width: 90vw;
+        word-break: break-all;
+      }
+      #error-display {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #000;
+        color: #ff4444;
+        padding: 20px;
+        border: 2px solid #ff4444;
+        font-family: monospace;
+        font-size: 14px;
+        z-index: 99999;
+        max-width: 90vw;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="debug-info">Loading...</div>
+    <script>
+      // Debug info
+      const debug = document.getElementById('debug-info');
+      debug.innerHTML = 'UserAgent: ' + navigator.userAgent.substring(0,50) + '<br>' +
+                       'Width: ' + window.innerWidth + '<br>' +
+                       'Mobile: ' + (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent));
+      
+      // Global error handler
+      window.onerror = function(msg, url, line, col, error) {
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'error-display';
+        errorDiv.innerHTML = '<h3>ERROR</h3>' + msg + '<br>Line: ' + line + '<br>Check console';
+        document.body.appendChild(errorDiv);
+        return false;
+      };
+      
+      // Unhandled promise rejection
+      window.onunhandledrejection = function(e) {
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'error-display';
+        errorDiv.innerHTML = '<h3>Promise ERROR</h3>' + e.reason;
+        document.body.appendChild(errorDiv);
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
