@@ -1,65 +1,7 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
-import * as THREE from 'three';
 import './App.css';
-
-// Simple 2D fallback component for mobile
-function SimpleGraphFallback({ nodes, links, colors }) {
-  return (
-    <div style={{
-      width: '100vw',
-      height: '100vh',
-      background: '#000',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#0f0',
-      fontFamily: 'monospace',
-      padding: '20px'
-    }}>
-      <div style={{ fontSize: '1.5rem', marginBottom: '20px' }}>🧠 AGENT BRAIN NETWORK</div>
-      <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px', textAlign: 'center' }}>
-        3D visualization requires desktop browser<br/>
-        Showing simplified view:
-      </div>
-      
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '15px',
-        maxWidth: '400px',
-        width: '100%'
-      }}>
-        {Object.entries(
-          nodes.reduce((acc, n) => {
-            acc[n.category] = (acc[n.category] || 0) + 1;
-            return acc;
-          }, {})
-        ).map(([cat, count]) => (
-          <div key={cat} style={{
-            background: 'rgba(0,255,0,0.1)',
-            border: '1px solid #0f0',
-            borderRadius: '8px',
-            padding: '15px',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{count}</div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>{cat}</div>
-          </div>
-        ))}
-      </div>
-      
-      <div style={{ marginTop: '30px', fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
-        Total: {nodes.length} nodes • {links.length} connections<br/>
-        <a href="https://agent-brain-dashboard.vercel.app" style={{ color: '#0f0' }} target="_blank">
-          Open on desktop for full 3D experience →
-        </a>
-      </div>
-    </div>
-  );
-}
 
 const gData = {
   nodes: [
@@ -449,59 +391,7 @@ const categoryColors = {
   'VECTOR': '#6666ff'
 };
 
-// Generate high-density neural nodes
-const generateNeuralNodes = (count = 150) => {
-  const neuralNodes = [];
-  const categories = ['NEURAL', 'SYNAPSE', 'NEURON', 'PATHWAY', 'IMPULSE'];
-  
-  for (let i = 0; i < count; i++) {
-    neuralNodes.push({
-      id: `neural_${i}`,
-      group: Math.floor(Math.random() * 5) + 11,
-      label: `${categories[Math.floor(Math.random() * categories.length)]}_${i}`,
-      desc: `Neural pathway connection node`,
-      val: Math.random() * 5 + 3,
-      category: 'NEURAL'
-    });
-  }
-  return neuralNodes;
-};
-
-// Generate neural connections
-const generateNeuralLinks = (baseNodes, neuralNodes) => {
-  const links = [];
-  const coreNodes = baseNodes.filter(n => n.group <= 2);
-  
-  neuralNodes.forEach((node, i) => {
-    // Connect to core nodes
-    if (Math.random() > 0.6) {
-      const target = coreNodes[Math.floor(Math.random() * coreNodes.length)];
-      links.push({ source: node.id, target: target.id });
-    }
-    // Connect to other neural nodes
-    if (i > 0 && Math.random() > 0.8) {
-      const targetIndex = Math.floor(Math.random() * i);
-      links.push({ source: node.id, target: neuralNodes[targetIndex].id });
-    }
-  });
-  
-  return links;
-};
-
-// Detect mobile device
-const isMobile = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-};
-
-// Check WebGL support
-const checkWebGL = () => {
-  try {
-    const canvas = document.createElement('canvas');
-    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-  } catch {
-    return false;
-  }
-};
+// Real-time activity feed
 const ACTIVITY_TEMPLATES = [
   { agent: "NEXUS", actions: ["Running healthcheck", "Deploying update", "Monitoring logs", "Scaling resources"] },
   { agent: "PULSE", actions: ["Analyzing TikTok trends", "Checking viral content", "Updating ad bids", "Scanning hashtags"] },
@@ -539,49 +429,18 @@ export default function App() {
   const [nodeSize, setNodeSize] = useState(1);
   const [linkOpacity, setLinkOpacity] = useState(0.2);
   const [activeFilter, setActiveFilter] = useState('ALL');
+  const [currentActivity, setCurrentActivity] = useState(generateActivity());
+  const [activityLog, setActivityLog] = useState([generateActivity(), generateActivity(), generateActivity()]);
+  const [metrics, setMetrics] = useState(generateRealtimeMetrics());
   const [hoverNode, setHoverNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth > 768);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState({});
+  const [nodeStatuses, setNodeStatuses] = useState({});
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const [sphereMode, setSphereMode] = useState(false);
-  const [glowIntensity, setGlowIntensity] = useState(0.6);
-  
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const [webGLSupported, setWebGLSupported] = useState(true);
-  const [renderError, setRenderError] = useState(null);
-  
-  // Check device capabilities on mount
-  useEffect(() => {
-    setIsMobileDevice(isMobile());
-    setWebGLSupported(checkWebGL());
-  }, []);
-
-  // WebSocket connection for real-time data
-  const { 
-    isConnected, 
-    metrics, 
-    activity, 
-    activityLog, 
-    nodeStatuses,
-    error 
-  } = useWebSocket();
-  
-  // Use WebSocket activity or fallback to simulated
-  const currentActivity = activity || { agent: 'SUPERVISOR', action: 'Initializing...', timestamp: new Date() };
-
-  // Window resize handler
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Loading progress simulation
   useEffect(() => {
@@ -598,33 +457,64 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Physics configuration - Brain structure with centripetal force
+  // Real-time updates
+  useEffect(() => {
+    if (isLoading) return;
+    
+    const activityInterval = setInterval(() => {
+      const newActivity = generateActivity();
+      setCurrentActivity(newActivity);
+      setActivityLog(prev => [newActivity, ...prev.slice(0, 9)]);
+    }, 3000);
+
+    const metricsInterval = setInterval(() => {
+      setMetrics(generateRealtimeMetrics());
+    }, 5000);
+
+    const statusInterval = setInterval(() => {
+      const statuses = {};
+      gData.nodes.forEach(node => {
+        statuses[node.id] = {
+          status: Math.random() > 0.1 ? 'active' : 'idle',
+          lastActive: new Date().toISOString(),
+          load: Math.floor(Math.random() * 100)
+        };
+      });
+      setNodeStatuses(statuses);
+    }, 8000);
+
+    return () => {
+      clearInterval(activityInterval);
+      clearInterval(metricsInterval);
+      clearInterval(statusInterval);
+    };
+  }, [isLoading]);
+
+  // Physics configuration - FIXED for stability
   useEffect(() => {
     if (!fgRef.current || isLoading) return;
     
-    // Brain structure physics - centripetal force for neural clustering
-    fgRef.current.d3Force('charge').strength(-80);
-    fgRef.current.d3Force('center', null);
+    // Configure physics with reduced repulsion and stronger center force
+    fgRef.current.d3Force('charge').strength(-30); // Reduced from -120
+    fgRef.current.d3Force('center', null); // Remove default center
     fgRef.current.d3Force('x', null);
     fgRef.current.d3Force('y', null);
     fgRef.current.d3Force('z', null);
     
-    // Strong center force for brain-like clustering
-    fgRef.current.d3Force('center', fgRef.current.d3Force('center').strength(0.08));
-    fgRef.current.d3Force('collide', fgRef.current.d3Force('collide')?.radius(d => d.val * 0.6).strength(0.8));
+    // Add custom forces using native d3-force from force-graph
+    fgRef.current.d3Force('center', fgRef.current.d3Force('center').strength(0.05));
+    fgRef.current.d3Force('collide', fgRef.current.d3Force('collide')?.radius(d => d.val * 0.5).strength(0.5));
     
-    // Brain structure settings
-    fgRef.current.d3AlphaDecay(0.02);
-    fgRef.current.d3VelocityDecay(0.4);
-    fgRef.current.warmupTicks(100);
-    fgRef.current.cooldownTicks(200);
+    // Simulation settings
+    fgRef.current.d3AlphaDecay(0.05); // Faster settle
+    fgRef.current.d3VelocityDecay(0.3); // More damping
+    fgRef.current.warmupTicks(50);
+    fgRef.current.cooldownTicks(100);
     
     // Initial camera position
     setTimeout(() => {
-      if (fgRef.current) {
-        fgRef.current.cameraPosition({ x: 300, y: 150, z: 400 }, { x: 0, y: 0, z: 0 }, 2000);
-      }
-    }, 500);
+      fgRef.current.cameraPosition({ x: 200, y: 100, z: 300 }, { x: 0, y: 0, z: 0 }, 1000);
+    }, 100);
   }, [isLoading]);
 
   // Smooth camera rotation
@@ -697,33 +587,6 @@ export default function App() {
     }
   }, []);
 
-  // Sphere mode effect - arrange nodes in spherical pattern
-  useEffect(() => {
-    if (!fgRef.current || isLoading) return;
-    
-    if (sphereMode) {
-      // Apply spherical layout
-      const nodes = graphData.nodes;
-      const radius = 200;
-      const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
-      
-      nodes.forEach((node, i) => {
-        const y = 1 - (i / (nodes.length - 1)) * 2;
-        const radiusAtY = Math.sqrt(1 - y * y) * radius;
-        const theta = phi * i;
-        
-        node.x = radiusAtY * Math.cos(theta);
-        node.y = y * radius;
-        node.z = radiusAtY * Math.sin(theta);
-      });
-      
-      fgRef.current.refresh();
-    } else {
-      // Reset to force-directed layout
-      fgRef.current.d3ReheatSimulation();
-    }
-  }, [sphereMode, isLoading]);
-
   const safeGetGroup = (nodeId) => {
     const node = gData.nodes.find(n => n.id === nodeId);
     return node ? node.group : null;
@@ -736,23 +599,15 @@ export default function App() {
     return validIds.has(s) && validIds.has(t);
   });
   
-  // Add neural nodes for high density - reduce count on mobile
-  const neuralCount = isMobileDevice ? 0 : 0; // Disable extra nodes for now
-  const neuralNodes = useMemo(() => generateNeuralNodes(neuralCount), [neuralCount]);
-  const neuralLinks = useMemo(() => generateNeuralLinks(gData.nodes, neuralNodes), [neuralNodes]);
-  
-  const allNodes = [...gData.nodes, ...neuralNodes];
-  const allLinks = [...cleanLinks, ...neuralLinks];
-  
   const safeGData = {
-    nodes: allNodes.map((n, i) => ({
+    nodes: gData.nodes.map((n, i) => ({
       ...n,
       // Pre-position nodes in clusters to reduce explosion
-      x: Math.cos(i * 0.3) * (50 + (n.group || 0) * 25) + (Math.random() - 0.5) * 30,
-      y: Math.sin(i * 0.3) * (50 + (n.group || 0) * 25) + (Math.random() - 0.5) * 30,
-      z: (Math.random() - 0.5) * 50
+      x: Math.cos(i * 0.5) * (50 + (n.group || 0) * 30) + (Math.random() - 0.5) * 20,
+      y: Math.sin(i * 0.5) * (50 + (n.group || 0) * 30) + (Math.random() - 0.5) * 20,
+      z: (Math.random() - 0.5) * 40
     })),
-    links: allLinks
+    links: cleanLinks
   };
 
   const graphData = activeFilter === 'ALL' ? safeGData : {
@@ -802,64 +657,12 @@ export default function App() {
     { color: '#6666ff', label: 'VECTOR' }
   ];
 
-  // Mobile fallback - show 2D summary immediately (skip loading)
-  if (isMobileDevice) {
-    return (
-      <div style={{
-        width: '100vw',
-        height: '100vh',
-        background: '#000',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#0f0',
-        fontFamily: 'monospace',
-        padding: '20px',
-        boxSizing: 'border-box'
-      }}>
-        <div style={{ fontSize: '1.5rem', marginBottom: '20px', textAlign: 'center' }}>🧠 AGENT BRAIN</div>
-        <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px', textAlign: 'center' }}>
-          Mobile View - 463 Nodes
-        </div>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '15px',
-          maxWidth: '400px',
-          width: '100%'
-        }}>
-          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>4</div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>CORE</div>
-          </div>
-          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>8</div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>AGENTS</div>
-          </div>
-          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>11</div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>MODELS</div>
-          </div>
-          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>54</div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>SKILLS</div>
-          </div>
-        </div>
-        <div style={{ marginTop: '30px', fontSize: '0.8rem', color: '#666', textAlign: 'center' }}>
-          Use desktop for 3D visualization
-        </div>
-      </div>
-    );
-  }
-
-  // Desktop only: Show loading screen
   if (isLoading) {
     return (
       <div style={{
         width: '100vw',
         height: '100vh',
-        background: '#000000',
+        background: '#050505',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -890,11 +693,6 @@ export default function App() {
       </div>
     );
   }
-
-  // WebGL not supported fallback - TEMP DISABLED
-  // if (!webGLSupported) {
-  //   return (fallback UI)
-  // }
 
   return (
     <div className="app-container">
@@ -952,7 +750,7 @@ export default function App() {
         top: '0',
         width: '320px',
         height: '100vh',
-        background: 'rgba(0,0,0,0.98)',
+        background: 'rgba(5,5,10,0.98)',
         borderRight: '1px solid #333',
         zIndex: 999,
         overflow: 'hidden',
@@ -1032,91 +830,44 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <div style={{ 
-        marginLeft: isSideMenuOpen ? '320px' : '0', 
-        width: isSideMenuOpen ? 'calc(100vw - 320px)' : '100vw',
-        height: '100vh', 
-        transition: 'margin-left 0.3s ease',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Debug info */}
-        <div style={{
-          position: 'absolute',
-          top: '10px',
-          left: '10px',
-          background: 'rgba(255,0,0,0.8)',
-          color: '#fff',
-          padding: '10px',
-          zIndex: 9999,
-          fontSize: '12px',
-          fontFamily: 'monospace'
-        }}>
-          <div>Nodes: {graphData?.nodes?.length || 0}</div>
-          <div>Links: {graphData?.links?.length || 0}</div>
-          <div>Width: {dimensions.width}</div>
-          <div>Height: {dimensions.height}</div>
-          <div>Mobile: {isMobileDevice ? 'Yes' : 'No'}</div>
-          <div>WebGL: {webGLSupported ? 'Yes' : 'No'}</div>
-        </div>
-
-        {dimensions.width > 0 && dimensions.height > 0 && graphData.nodes.length > 0 ? (
+      <div style={{ marginLeft: isSideMenuOpen ? '320px' : '0', height: '100vh', transition: 'margin-left 0.3s ease' }}>
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
-          warmupTicks={20}
-          cooldownTicks={50}
-          width={isSideMenuOpen ? dimensions.width - 320 : dimensions.width}
-          height={dimensions.height}
-          nodeRelSize={8}
-          nodeColor={node => colors[node.group] || '#ffffff'}
-          nodeVal={node => node.val || 10}
-          nodeResolution={8}
-          linkWidth={1}
-          linkColor={() => 'rgba(100,200,255,0.5)'}
-          linkDirectionalArrowLength={0}
-          linkDirectionalParticles={0}
+          warmupTicks={50}
+          cooldownTicks={100}
+          nodeRelSize={4 * nodeSize}
+          nodeColor={node => colors[node.group]}
+          nodeVal={node => node.val * nodeSize}
+          nodeResolution={16}
+          nodeThreeObjectExtend={true}
+          nodeThreeObject={node => {
+            if (!showLabels) return null;
+            const sprite = new SpriteText(node.label);
+            sprite.color = 'rgba(255,255,255,0.9)';
+            sprite.textHeight = 3 * nodeSize;
+            sprite.position.y = 10 * nodeSize;
+            return sprite;
+          }}
+          linkWidth={0.5}
+          linkColor={() => `rgba(100,150,255,${linkOpacity})`}
+          linkDirectionalArrowLength={3}
+          linkDirectionalArrowRelPos={1}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
-          backgroundColor="#000000"
+          backgroundColor="#050505"
         />
-        ) : (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: '#ff4444',
-            fontSize: '1.5rem',
-            textAlign: 'center'
-          }}>
-            ⚠️ Cannot render graph
-            <div style={{ fontSize: '1rem', color: '#888', marginTop: '10px' }}>
-              Dimensions: {dimensions.width}x{dimensions.height}<br/>
-              Nodes: {graphData.nodes.length}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* HUD - Sci-Fi Interface */}
-      <div style={{ position: 'fixed', top: 0, left: isSideMenuOpen ? '320px' : '0', right: 0, pointerEvents: 'none', zIndex: 50 }}>
-        {/* Header - Sci-Fi Style */}
+      {/* HUD */}
+      <div style={{ position: 'fixed', top: 0, left: isSideMenuOpen ? '320px' : '0', right: 0, pointerEvents: 'none' }}>
+        {/* Header */}
         <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ 
-            background: 'linear-gradient(135deg, rgba(0,20,40,0.9), rgba(0,10,20,0.95))',
-            padding: '15px 25px',
-            borderRadius: '8px',
-            border: '1px solid rgba(0,255,200,0.3)',
-            boxShadow: '0 0 30px rgba(0,255,200,0.1), inset 0 0 20px rgba(0,255,200,0.05)'
-          }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fff', letterSpacing: '2px', textShadow: '0 0 10px rgba(0,255,200,0.5)' }}>
-              NEURAL<span style={{ color: '#00ffc8' }}>//</span>OS
+          <div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>
+              OpenClaw<span style={{ color: '#0f0' }}>//OS</span> <span style={{ fontSize: '0.6rem', color: '#f00' }}>v5.1</span>
             </div>
-            <div style={{ fontSize: '0.7rem', color: '#00ffc8', marginTop: '8px', letterSpacing: '3px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ width: '6px', height: '6px', background: '#00ff66', borderRadius: '50%', animation: 'pulse 1.5s infinite', boxShadow: '0 0 10px #00ff66' }}></span>
-              ONLINE • {graphData.nodes.length} NEURAL NODES
-            </div>
+            <div style={{ fontSize: '0.8rem', color: '#0f0', marginTop: '5px' }}>ONLINE • {graphData.nodes.length} MODULES</div>
           </div>
         </div>
 
@@ -1234,34 +985,9 @@ export default function App() {
             </div>
 
             <h4 style={{ color: '#666', fontSize: '0.7rem', marginBottom: '8px' }}>CONTROLS</h4>
-            
-            {/* Sphere Mode Toggle */}
-            <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ color: '#aaa', fontSize: '0.75rem' }}>🎯 Sphere Mode</span>
-                <button
-                  onClick={() => setSphereMode(!sphereMode)}
-                  style={{
-                    background: sphereMode ? '#0f0' : 'transparent',
-                    color: sphereMode ? '#000' : '#0f0',
-                    border: '1px solid #0f0',
-                    padding: '4px 12px',
-                    borderRadius: '4px',
-                    fontSize: '0.7rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {sphereMode ? 'ON' : 'OFF'}
-                </button>
-              </div>
-              <div style={{ fontSize: '0.65rem', color: '#666' }}>
-                {sphereMode ? 'Nodes arranged in 3D sphere' : 'Free-form graph layout'}
-              </div>
-            </div>
-            
             <div style={{ marginBottom: '10px' }}>
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Node Size: {nodeSize.toFixed(1)}</label>
-              <input type="range" min="0.5" max="3" step="0.1" value={nodeSize} onChange={e => setNodeSize(parseFloat(e.target.value))} style={{ width: '100%' }} />
+              <input type="range" min="0.5" max="2" step="0.1" value={nodeSize} onChange={e => setNodeSize(parseFloat(e.target.value))} style={{ width: '100%' }} />
             </div>
             <div style={{ marginBottom: '10px' }}>
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Rotation: {rotationSpeed.toFixed(1)}</label>
@@ -1271,12 +997,6 @@ export default function App() {
               <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Link Opacity: {linkOpacity.toFixed(1)}</label>
               <input type="range" min="0" max="1" step="0.1" value={linkOpacity} onChange={e => setLinkOpacity(parseFloat(e.target.value))} style={{ width: '100%' }} />
             </div>
-            
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ color: '#aaa', fontSize: '0.75rem' }}>Glow Intensity: {glowIntensity.toFixed(1)}</label>
-              <input type="range" min="0" max="1" step="0.1" value={glowIntensity} onChange={e => setGlowIntensity(parseFloat(e.target.value))} style={{ width: '100%' }} />
-            </div>
-            
             <label style={{ color: '#aaa', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input type="checkbox" checked={showLabels} onChange={e => setShowLabels(e.target.checked)} /> Show Labels
             </label>
@@ -1289,7 +1009,7 @@ export default function App() {
             position: 'absolute',
             bottom: '20px',
             left: '20px',
-            background: 'rgba(0,0,0,0.95)',
+            background: 'rgba(10,10,15,0.95)',
             backdropFilter: 'blur(10px)',
             padding: '20px',
             borderRadius: '8px',
