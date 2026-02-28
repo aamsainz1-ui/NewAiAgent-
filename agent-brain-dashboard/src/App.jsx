@@ -442,42 +442,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
 
-  // Mobile detection - show desktop only message
+  // Mobile detection - use lightweight 3D
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-  
-  if (isMobile) {
-    return (
-      <div style={{
-        width: '100vw',
-        height: '100vh',
-        background: '#000',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
-        fontFamily: 'monospace',
-        padding: '20px',
-        textAlign: 'center'
-      }}>
-        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🧠</div>
-        <div style={{ fontSize: '1.5rem', marginBottom: '10px', color: '#0f0' }}>
-          AGENT BRAIN 3D
-        </div>
-        <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px' }}>
-          Desktop Browser Required
-        </div>
-        <div style={{ fontSize: '0.9rem', color: '#666', maxWidth: '300px', lineHeight: '1.6' }}>
-          This 3D visualization requires WebGL and a larger screen.
-          <br /><br />
-          Please open on a desktop computer for the full experience.
-        </div>
-        <div style={{ marginTop: '40px', fontSize: '0.8rem', color: '#444' }}>
-          463 Neural Nodes • 13 Categories
-        </div>
-      </div>
-    );
-  }
 
   // Loading progress simulation
   useEffect(() => {
@@ -543,10 +509,10 @@ export default function App() {
     fgRef.current.d3Force('collide', fgRef.current.d3Force('collide')?.radius(d => d.val * 0.5).strength(0.5));
     
     // Simulation settings
-    fgRef.current.d3AlphaDecay(0.05); // Faster settle
-    fgRef.current.d3VelocityDecay(0.3); // More damping
-    fgRef.current.warmupTicks(50);
-    fgRef.current.cooldownTicks(100);
+    fgRef.current.d3AlphaDecay(isMobile ? 0.1 : 0.05); // Faster settle on mobile
+    fgRef.current.d3VelocityDecay(isMobile ? 0.5 : 0.3); // More damping on mobile
+    fgRef.current.warmupTicks(isMobile ? 10 : 50);
+    fgRef.current.cooldownTicks(isMobile ? 20 : 100);
     
     // Initial camera position
     setTimeout(() => {
@@ -647,14 +613,26 @@ export default function App() {
     links: cleanLinks
   };
 
-  const graphData = activeFilter === 'ALL' ? safeGData : {
-    nodes: safeGData.nodes.filter(n => n.group === activeFilter),
+  // Mobile: use only core nodes (reduce to ~35 nodes for performance)
+  const mobileGData = {
+    nodes: safeGData.nodes.filter(n => n.group <= 2), // Only CORE, AGENTS, MODELS
     links: safeGData.links.filter(l => {
       const s = typeof l.source === 'object' ? l.source.group : safeGetGroup(l.source);
       const t = typeof l.target === 'object' ? l.target.group : safeGetGroup(l.target);
-      return s === activeFilter || t === activeFilter;
+      return s <= 2 && t <= 2;
     })
   };
+
+  const graphData = activeFilter === 'ALL' ? 
+    (isMobile ? mobileGData : safeGData) : 
+    {
+      nodes: safeGData.nodes.filter(n => n.group === activeFilter),
+      links: safeGData.links.filter(l => {
+        const s = typeof l.source === 'object' ? l.source.group : safeGetGroup(l.source);
+        const t = typeof l.target === 'object' ? l.target.group : safeGetGroup(l.target);
+        return s === activeFilter || t === activeFilter;
+      })
+    };
 
   const nodesByCategory = gData.nodes.reduce((acc, node) => {
     const cat = node.category || 'OTHER';
@@ -871,12 +849,12 @@ export default function App() {
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
-          warmupTicks={50}
-          cooldownTicks={100}
+          warmupTicks={isMobile ? 0 : 50}
+          cooldownTicks={isMobile ? 0 : 100}
           nodeRelSize={4 * nodeSize}
           nodeColor={node => colors[node.group]}
           nodeVal={node => node.val * nodeSize}
-          nodeResolution={16}
+          nodeResolution={isMobile ? 8 : 16}
           nodeThreeObjectExtend={true}
           nodeThreeObject={node => {
             if (!showLabels) return null;
@@ -888,7 +866,7 @@ export default function App() {
           }}
           linkWidth={0.5}
           linkColor={() => `rgba(100,150,255,${linkOpacity})`}
-          linkDirectionalArrowLength={3}
+          linkDirectionalArrowLength={isMobile ? 0 : 3}
           linkDirectionalArrowRelPos={1}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
