@@ -681,7 +681,7 @@ export default function App() {
   });
   
   // Add neural nodes for high density - reduce count on mobile
-  const neuralCount = isMobileDevice ? 30 : 150;
+  const neuralCount = isMobileDevice ? 0 : 0; // Disable extra nodes for now
   const neuralNodes = useMemo(() => generateNeuralNodes(neuralCount), [neuralCount]);
   const neuralLinks = useMemo(() => generateNeuralLinks(gData.nodes, neuralNodes), [neuralNodes]);
   
@@ -957,8 +957,30 @@ export default function App() {
         width: isSideMenuOpen ? 'calc(100vw - 320px)' : '100vw',
         height: '100vh', 
         transition: 'margin-left 0.3s ease',
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        {/* Debug info */}
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          background: 'rgba(255,0,0,0.8)',
+          color: '#fff',
+          padding: '10px',
+          zIndex: 9999,
+          fontSize: '12px',
+          fontFamily: 'monospace'
+        }}>
+          <div>Nodes: {graphData?.nodes?.length || 0}</div>
+          <div>Links: {graphData?.links?.length || 0}</div>
+          <div>Width: {dimensions.width}</div>
+          <div>Height: {dimensions.height}</div>
+          <div>Mobile: {isMobileDevice ? 'Yes' : 'No'}</div>
+          <div>WebGL: {webGLSupported ? 'Yes' : 'No'}</div>
+        </div>
+
+        {dimensions.width > 0 && dimensions.height > 0 && graphData.nodes.length > 0 && (
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
@@ -966,110 +988,53 @@ export default function App() {
           cooldownTicks={100}
           width={isSideMenuOpen ? dimensions.width - 320 : dimensions.width}
           height={dimensions.height}
-          nodeRelSize={4 * nodeSize}
-          nodeColor={node => colors[node.group]}
-          nodeVal={node => node.val * nodeSize}
-          nodeResolution={16}
-          nodeThreeObjectExtend={true}
+          nodeRelSize={6}
+          nodeColor={node => colors[node.group] || '#ffffff'}
+          nodeVal={node => node.val}
+          nodeResolution={isMobileDevice ? 8 : 16}
           nodeThreeObject={node => {
-            // Mobile: use simple sphere, Desktop: use enhanced glow
+            const size = (node.val || 10) * 0.8;
+            const color = colors[node.group] || '#ffffff';
+            
             if (isMobileDevice) {
-              const geometry = new THREE.SphereGeometry(node.val * 0.5 * nodeSize, 8, 8);
+              const geometry = new THREE.SphereGeometry(size, 8, 8);
               const material = new THREE.MeshBasicMaterial({
-                color: colors[node.group],
+                color: color,
                 transparent: true,
                 opacity: 0.9
               });
               return new THREE.Mesh(geometry, material);
             }
             
-            // Desktop: enhanced glowing sphere with aura layers
             const group = new THREE.Group();
-            const baseSize = node.val * 0.5 * nodeSize;
-            const color = colors[node.group] || '#ffffff';
             
-            // Core sphere - high emissive
-            const coreGeometry = new THREE.SphereGeometry(baseSize * 0.6, 32, 32);
-            const coreMaterial = new THREE.MeshStandardMaterial({
-              color: color,
-              emissive: color,
-              emissiveIntensity: glowIntensity * 2,
-              roughness: 0.2,
-              metalness: 0.9
-            });
-            const core = new THREE.Mesh(coreGeometry, coreMaterial);
+            const core = new THREE.Mesh(
+              new THREE.SphereGeometry(size, 16, 16),
+              new THREE.MeshBasicMaterial({ color: color })
+            );
             group.add(core);
             
-            // Inner aura layer
-            const innerGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 1.0, 32, 32),
+            const glow = new THREE.Mesh(
+              new THREE.SphereGeometry(size * 1.5, 16, 16),
               new THREE.MeshBasicMaterial({
                 color: color,
                 transparent: true,
-                opacity: 0.25
+                opacity: 0.2
               })
             );
-            group.add(innerGlow);
-            
-            // Middle aura layer
-            const middleGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 1.4, 32, 32),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.12
-              })
-            );
-            group.add(middleGlow);
-            
-            // Outer atmospheric aura
-            const outerGlow = new THREE.Mesh(
-              new THREE.SphereGeometry(baseSize * 2.0, 32, 32),
-              new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.05
-              })
-            );
-            group.add(outerGlow);
-            
-            // Halo ring
-            const ringGeometry = new THREE.RingGeometry(baseSize * 2.2, baseSize * 2.3, 64);
-            const ringMaterial = new THREE.MeshBasicMaterial({
-              color: color,
-              transparent: true,
-              opacity: 0.08,
-              side: THREE.DoubleSide
-            });
-            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-            ring.lookAt(0, 0, 1);
-            group.add(ring);
-            
-            // Add label if enabled
-            if (showLabels) {
-              const sprite = new SpriteText(node.label);
-              sprite.color = 'rgba(255,255,255,0.9)';
-              sprite.textHeight = 3 * nodeSize;
-              sprite.position.y = baseSize * 2.8;
-              group.add(sprite);
-            }
+            group.add(glow);
             
             return group;
           }}
-          linkWidth={isMobileDevice ? 1 : 0.5}
-          linkOpacity={linkOpacity}
-          linkColor={() => `rgba(100,150,255,${linkOpacity})`}
-          linkDirectionalArrowLength={isMobileDevice ? 0 : 3}
-          linkDirectionalArrowRelPos={1}
-          // Neural Pulse Effect - disabled on mobile for performance
-          linkDirectionalParticles={isMobileDevice ? 0 : 4}
-          linkDirectionalParticleSpeed={0.008}
-          linkDirectionalParticleWidth={2}
-          linkDirectionalParticleColor={() => '#00ffff'}
+          linkWidth={1}
+          linkColor={() => 'rgba(100,200,255,0.4)'}
+          linkDirectionalArrowLength={0}
+          linkDirectionalParticles={0}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
           backgroundColor="#000000"
         />
+        )}
       </div>
 
       {/* HUD - Sci-Fi Interface */}
