@@ -438,6 +438,7 @@ export default function App() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
   
   // WebSocket connection for real-time data
   const { 
@@ -451,6 +452,15 @@ export default function App() {
   
   // Use WebSocket activity or fallback to simulated
   const currentActivity = activity || { agent: 'SUPERVISOR', action: 'Initializing...', timestamp: new Date() };
+
+  // Window resize handler
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Loading progress simulation
   useEffect(() => {
@@ -807,12 +817,20 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <div style={{ marginLeft: isSideMenuOpen ? '320px' : '0', height: '100vh', transition: 'margin-left 0.3s ease' }}>
+      <div style={{ 
+        marginLeft: isSideMenuOpen ? '320px' : '0', 
+        width: isSideMenuOpen ? 'calc(100vw - 320px)' : '100vw',
+        height: '100vh', 
+        transition: 'margin-left 0.3s ease',
+        position: 'relative'
+      }}>
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
           warmupTicks={50}
           cooldownTicks={100}
+          width={isSideMenuOpen ? dimensions.width - 320 : dimensions.width}
+          height={dimensions.height}
           nodeRelSize={4 * nodeSize}
           nodeColor={node => colors[node.group]}
           nodeVal={node => node.val * nodeSize}
