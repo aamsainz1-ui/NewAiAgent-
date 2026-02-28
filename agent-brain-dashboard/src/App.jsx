@@ -804,7 +804,53 @@ export default function App() {
 
   // Mobile fallback - show 2D summary immediately (skip loading)
   if (isMobileDevice) {
-    return <SimpleGraphFallback nodes={gData.nodes} links={gData.links} colors={colors} />;
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#000',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#0f0',
+        fontFamily: 'monospace',
+        padding: '20px',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ fontSize: '1.5rem', marginBottom: '20px', textAlign: 'center' }}>🧠 AGENT BRAIN</div>
+        <div style={{ fontSize: '1rem', color: '#888', marginBottom: '30px', textAlign: 'center' }}>
+          Mobile View - 463 Nodes
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '15px',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>4</div>
+            <div style={{ fontSize: '0.8rem', color: '#888' }}>CORE</div>
+          </div>
+          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>8</div>
+            <div style={{ fontSize: '0.8rem', color: '#888' }}>AGENTS</div>
+          </div>
+          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>11</div>
+            <div style={{ fontSize: '0.8rem', color: '#888' }}>MODELS</div>
+          </div>
+          <div style={{ background: 'rgba(0,255,0,0.1)', border: '1px solid #0f0', borderRadius: '8px', padding: '15px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>54</div>
+            <div style={{ fontSize: '0.8rem', color: '#888' }}>SKILLS</div>
+          </div>
+        </div>
+        <div style={{ marginTop: '30px', fontSize: '0.8rem', color: '#666', textAlign: 'center' }}>
+          Use desktop for 3D visualization
+        </div>
+      </div>
+    );
   }
 
   // Desktop only: Show loading screen
