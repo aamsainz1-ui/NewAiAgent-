@@ -802,6 +802,12 @@ export default function App() {
     { color: '#6666ff', label: 'VECTOR' }
   ];
 
+  // Mobile fallback - show 2D summary immediately (skip loading)
+  if (isMobileDevice) {
+    return <SimpleGraphFallback nodes={gData.nodes} links={gData.links} colors={colors} />;
+  }
+
+  // Desktop only: Show loading screen
   if (isLoading) {
     return (
       <div style={{
@@ -843,11 +849,6 @@ export default function App() {
   // if (!webGLSupported) {
   //   return (fallback UI)
   // }
-
-  // Mobile fallback - show 2D summary instead of 3D
-  if (isMobileDevice) {
-    return <SimpleGraphFallback nodes={gData.nodes} links={gData.links} colors={colors} />;
-  }
 
   return (
     <div className="app-container">
