@@ -34,6 +34,15 @@
       </div>
     </div>
     <script>
+      // Mobile redirect - BEFORE React loads
+      (function() {
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        if (isMobile) {
+          window.location.href = '/mobile.html';
+        }
+      })();
+    </script>
+    <script>
       // Remove loading screen when app mounts
       window.onload = function() {
         // Fallback: remove spinner after 5s max if React is slow

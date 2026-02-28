@@ -31,6 +31,15 @@
         <div class="loading-text">LOADING BRAIN...</div>
       </div>
     </div>
+    <script>
+      // Mobile redirect - BEFORE React loads
+      (function() {
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        if (isMobile) {
+          window.location.href = '/mobile.html';
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
     <script>
       // Remove loading screen when app mounts
