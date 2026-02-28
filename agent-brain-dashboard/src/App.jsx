@@ -445,7 +445,107 @@ export default function App() {
   // Mobile detection - use lightweight 3D
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-  // Loading progress simulation
+  // Mobile: Show static image of the brain network
+  if (isMobile) {
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#000',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontFamily: 'monospace',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '1.5rem', marginBottom: '10px', color: '#0f0' }}>
+          🧠 AGENT BRAIN 3D
+        </div>
+        <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '20px' }}>
+          463 Neural Nodes • 13 Categories
+        </div>
+        
+        {/* Static visualization using CSS */}
+        <div style={{
+          width: '280px',
+          height: '280px',
+          position: 'relative',
+          background: 'radial-gradient(circle at center, #1a1a2e 0%, #000 70%)',
+          borderRadius: '50%',
+          border: '2px solid #0f0',
+          boxShadow: '0 0 30px rgba(0,255,0,0.3)',
+          marginBottom: '20px'
+        }}>
+          {/* CORE - Center */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '40px',
+            height: '40px',
+            background: '#fff',
+            borderRadius: '50%',
+            boxShadow: '0 0 20px #fff',
+            zIndex: 10
+          }} />
+          
+          {/* AGENTS - Ring 1 */}
+          {['#ff0055', '#ff0055', '#ff0055', '#ff0055', '#ff0055', '#ff0055', '#ff0055', '#ff0055'].map((color, i) => (
+            <div key={`agent-${i}`} style={{
+              position: 'absolute',
+              top: `${50 + 25 * Math.sin(i * Math.PI / 4)}%`,
+              left: `${50 + 25 * Math.cos(i * Math.PI / 4)}%`,
+              transform: 'translate(-50%, -50%)',
+              width: '20px',
+              height: '20px',
+              background: color,
+              borderRadius: '50%',
+              boxShadow: `0 0 10px ${color}`
+            }} />
+          ))}
+          
+          {/* MODELS - Ring 2 */}
+          {['#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff', '#00ccff'].map((color, i) => (
+            <div key={`model-${i}`} style={{
+              position: 'absolute',
+              top: `${50 + 40 * Math.sin(i * Math.PI / 5.5)}%`,
+              left: `${50 + 40 * Math.cos(i * Math.PI / 5.5)}%`,
+              transform: 'translate(-50%, -50%)',
+              width: '12px',
+              height: '12px',
+              background: color,
+              borderRadius: '50%',
+              boxShadow: `0 0 8px ${color}`
+            }} />
+          ))}
+          
+          {/* Connection lines */}
+          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+            <line x1="50%" y1="50%" x2="75%" y2="50%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="50%" y2="25%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="25%" y2="50%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="50%" y2="75%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="65%" y2="65%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="35%" y2="65%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="65%" y2="35%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+            <line x1="50%" y1="50%" x2="35%" y2="35%" stroke="rgba(100,150,255,0.3)" strokeWidth="1" />
+          </svg>
+        </div>
+        
+        <div style={{ fontSize: '0.8rem', color: '#666', lineHeight: '1.6' }}>
+          <div style={{ color: '#fff', marginBottom: '5px' }}>CORE • AGENTS • MODELS</div>
+          <div>SKILLS • KNOWLEDGE • MEMORY</div>
+          <div style={{ marginTop: '15px', color: '#888' }}>
+            Open on desktop for interactive 3D
+          </div>
+        </div>
+      </div>
+    );
+  }
   useEffect(() => {
     let progress = 0;
     const interval = setInterval(() => {
