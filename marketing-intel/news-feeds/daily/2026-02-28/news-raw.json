@@ -1,0 +1,130 @@
+{
+  "timestamp": "2026-02-28T01:10:29.271Z",
+  "date": "2026-02-28",
+  "sources": [
+    {
+      "type": "rss",
+      "name": "Thai PBS Sports",
+      "url": "https://news.thaipbs.or.th/rss/sport.xml",
+      "category": "sports",
+      "lastChecked": "2026-02-28T01:10:29.271Z",
+      "items": []
+    },
+    {
+      "type": "rss",
+      "name": "Siam Sport",
+      "url": "https://www.siamsport.co.th/rss/feed.xml",
+      "category": "sports",
+      "lastChecked": "2026-02-28T01:10:29.271Z",
+      "items": []
+    },
+    {
+      "type": "rss",
+      "name": "Goal.com Thailand",
+      "url": "https://www.goal.com/th/feeds/news",
+      "category": "football",
+      "lastChecked": "2026-02-28T01:10:29.271Z",
+      "items": []
+    }
+  ],
+  "alerts": [
+    {
+      "keyword": "ufabet",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=ufabet",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "sbobet",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=sbobet",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "lsm99",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=lsm99",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "gclub",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=gclub",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "แทงบอลออนไลน์",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B9%81%E0%B8%97%E0%B8%87%E0%B8%9A%E0%B8%AD%E0%B8%A5%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "คาสิโนออนไลน์",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B8%84%E0%B8%B2%E0%B8%AA%E0%B8%B4%E0%B9%82%E0%B8%99%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "เว็บพนัน",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B9%80%E0%B8%A7%E0%B9%87%E0%B8%9A%E0%B8%9E%E0%B8%99%E0%B8%B1%E0%B8%99",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "บาคาร่า",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B8%9A%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%A3%E0%B9%88%E0%B8%B2",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "สล็อต",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B8%AA%E0%B8%A5%E0%B9%87%E0%B8%AD%E0%B8%95",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "keyword": "หวยออนไลน์",
+      "googleAlertUrl": "https://www.google.com/alerts/feeds?keyword=%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C",
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    }
+  ],
+  "competitorMentions": [
+    {
+      "competitor": "ufabet",
+      "domains": [
+        "ufabet.com",
+        "ufabet.co"
+      ],
+      "social": [
+        "@ufabetofficial"
+      ],
+      "mentions": [],
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "competitor": "sbobet",
+      "domains": [
+        "sbobet.com"
+      ],
+      "social": [
+        "@sbobet"
+      ],
+      "mentions": [],
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "competitor": "lsm99",
+      "domains": [
+        "lsm99.com"
+      ],
+      "social": [
+        "@lsm99official"
+      ],
+      "mentions": [],
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    },
+    {
+      "competitor": "gclub",
+      "domains": [
+        "gclub.com"
+      ],
+      "social": [
+        "@gclubcasino"
+      ],
+      "mentions": [],
+      "lastChecked": "2026-02-28T01:10:29.271Z"
+    }
+  ],
+  "trends": []
+}

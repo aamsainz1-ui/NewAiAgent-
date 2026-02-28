@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
+import { useWebSocket } from './useWebSocket';
 import './App.css';
 
 const gData = {
@@ -429,18 +430,27 @@ export default function App() {
   const [nodeSize, setNodeSize] = useState(1);
   const [linkOpacity, setLinkOpacity] = useState(0.2);
   const [activeFilter, setActiveFilter] = useState('ALL');
-  const [currentActivity, setCurrentActivity] = useState(generateActivity());
-  const [activityLog, setActivityLog] = useState([generateActivity(), generateActivity(), generateActivity()]);
-  const [metrics, setMetrics] = useState(generateRealtimeMetrics());
   const [hoverNode, setHoverNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(window.innerWidth > 768);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState({});
-  const [nodeStatuses, setNodeStatuses] = useState({});
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulationPaused, setIsSimulationPaused] = useState(false);
+  
+  // WebSocket connection for real-time data
+  const { 
+    isConnected, 
+    metrics, 
+    activity, 
+    activityLog, 
+    nodeStatuses,
+    error 
+  } = useWebSocket();
+  
+  // Use WebSocket activity or fallback to simulated
+  const currentActivity = activity || { agent: 'SUPERVISOR', action: 'Initializing...', timestamp: new Date() };
 
   // Loading progress simulation
   useEffect(() => {
@@ -456,39 +466,6 @@ export default function App() {
     }, 200);
     return () => clearInterval(interval);
   }, []);
-
-  // Real-time updates
-  useEffect(() => {
-    if (isLoading) return;
-    
-    const activityInterval = setInterval(() => {
-      const newActivity = generateActivity();
-      setCurrentActivity(newActivity);
-      setActivityLog(prev => [newActivity, ...prev.slice(0, 9)]);
-    }, 3000);
-
-    const metricsInterval = setInterval(() => {
-      setMetrics(generateRealtimeMetrics());
-    }, 5000);
-
-    const statusInterval = setInterval(() => {
-      const statuses = {};
-      gData.nodes.forEach(node => {
-        statuses[node.id] = {
-          status: Math.random() > 0.1 ? 'active' : 'idle',
-          lastActive: new Date().toISOString(),
-          load: Math.floor(Math.random() * 100)
-        };
-      });
-      setNodeStatuses(statuses);
-    }, 8000);
-
-    return () => {
-      clearInterval(activityInterval);
-      clearInterval(metricsInterval);
-      clearInterval(statusInterval);
-    };
-  }, [isLoading]);
 
   // Physics configuration - FIXED for stability
   useEffect(() => {
@@ -662,7 +639,7 @@ export default function App() {
       <div style={{
         width: '100vw',
         height: '100vh',
-        background: '#050505',
+        background: '#000000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -750,7 +727,7 @@ export default function App() {
         top: '0',
         width: '320px',
         height: '100vh',
-        background: 'rgba(5,5,10,0.98)',
+        background: 'rgba(0,0,0,0.98)',
         borderRight: '1px solid #333',
         zIndex: 999,
         overflow: 'hidden',
@@ -855,7 +832,7 @@ export default function App() {
           linkDirectionalArrowRelPos={1}
           onNodeClick={handleNodeClick}
           onNodeHover={setHoverNode}
-          backgroundColor="#050505"
+          backgroundColor="#000000"
         />
       </div>
 
@@ -1009,7 +986,7 @@ export default function App() {
             position: 'absolute',
             bottom: '20px',
             left: '20px',
-            background: 'rgba(10,10,15,0.95)',
+            background: 'rgba(0,0,0,0.95)',
             backdropFilter: 'blur(10px)',
             padding: '20px',
             borderRadius: '8px',
