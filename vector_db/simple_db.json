@@ -1,0 +1,54 @@
+{
+  "marketing": [
+    {
+      "id": "1",
+      "text": "TikTok ads for gambling in Thailand work best with celebrity endorsements",
+      "embedding": {
+        "tiktok": 1,
+        "ads": 1,
+        "for": 1,
+        "gambling": 1,
+        "in": 1,
+        "thailand": 1,
+        "work": 1,
+        "best": 1,
+        "with": 1,
+        "celebrity": 1,
+        "endorsements": 1
+      },
+      "metadata": {},
+      "timestamp": 1772233183291
+    },
+    {
+      "id": "2",
+      "text": "SEO for Vietnamese gambling sites requires PBN networks",
+      "embedding": {
+        "seo": 1,
+        "for": 1,
+        "vietnamese": 1,
+        "gambling": 1,
+        "sites": 1,
+        "requires": 1,
+        "pbn": 1,
+        "networks": 1
+      },
+      "metadata": {},
+      "timestamp": 1772233183291
+    },
+    {
+      "id": "3",
+      "text": "Indonesian togel marketing uses WhatsApp groups heavily",
+      "embedding": {
+        "indonesian": 1,
+        "togel": 1,
+        "marketing": 1,
+        "uses": 1,
+        "whatsapp": 1,
+        "groups": 1,
+        "heavily": 1
+      },
+      "metadata": {},
+      "timestamp": 1772233183291
+    }
+  ]
+}

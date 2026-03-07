@@ -1,0 +1,322 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #050505;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #fff;
+}
+
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* --- HUD LAYOUT --- */
+.hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through to 3D canvas */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* --- HEADER --- */
+.hud-header {
+  pointer-events: auto;
+  background: rgba(10, 10, 15, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 15px 25px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: fit-content;
+  min-width: 300px;
+}
+
+.hud-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.hud-title span {
+  color: #00ccff;
+  font-weight: 300;
+}
+
+.hud-status {
+  font-size: 0.7rem;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  margin-left: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- ADVANCED CONTROLS PANEL --- */
+.panel-toggle-btn {
+  pointer-events: auto;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(20, 20, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 20;
+  font-size: 0.8rem;
+  backdrop-filter: blur(5px);
+  transition: all 0.2s;
+}
+
+.panel-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hud-controls-advanced {
+  pointer-events: auto;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: rgba(15, 15, 20, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 240px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  z-index: 10;
+}
+
+.hud-controls-advanced h3 {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  color: #a0a0ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.control-section {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-section label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #bbb;
+  cursor: pointer;
+}
+
+.control-section input[type="checkbox"] {
+  accent-color: #4a80ff;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.slider-label {
+  font-size: 0.75rem;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type=range] {
+  width: 100%;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #a0a0ff;
+  cursor: pointer;
+}
+
+input[type=color] {
+  width: 100%;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+}
+
+.hud-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hud-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+}
+
+.hud-btn.active {
+  background: rgba(0, 204, 255, 0.2);
+  border-color: #00ccff;
+  color: #00ccff;
+}
+
+/* --- DETAIL PANEL --- */
+.hud-detail-panel {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  width: 350px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 25px;
+  color: #fff;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.hud-detail-panel h1 {
+  margin: 0 0 10px 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.hud-detail-panel p {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.detail-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-box .label {
+  font-size: 0.65rem;
+  color: #666;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.stat-box .val {
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+}
+
+/* Custom Scrollbar for panel */
+.hud-controls-advanced::-webkit-scrollbar {
+  width: 6px;
+}
+.hud-controls-advanced::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2); 
+}
+.hud-controls-advanced::-webkit-scrollbar-thumb {
+  background: rgba(0, 204, 255, 0.5); 
+  border-radius: 3px;
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 768px) {
+  .hud-header {
+    width: auto;
+    min-width: auto;
+    padding: 10px 15px;
+    left: 15px;
+    right: 15px;
+    position: absolute;
+    top: 15px;
+  }
+  
+  .hud-status { display: none; }
+
+  .panel-toggle-btn {
+    top: 75px; /* Below the header */
+    right: 15px;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  .hud-controls-advanced {
+    top: 120px;
+    right: 15px;
+    width: 240px;
+    padding: 15px;
+  }
+
+  .hud-detail-panel {
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    width: auto;
+    padding: 15px;
+  }
+
+  .hud-detail-panel h1 { font-size: 1.2rem; }
+  .hud-detail-panel p { font-size: 0.8rem; margin-bottom: 10px; }
+  .detail-stat-grid { padding-top: 10px; }
+  .stat-box { padding: 8px; }
+  .stat-box .val { font-size: 0.9rem; }
+}

@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "gemini": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["node_modules/@modelcontextprotocol/sdk/src/server/gemini.js"]
+    }
+  },
+  "auth": {},
+  "daemon": {
+    "enabled": true
+  }
+}

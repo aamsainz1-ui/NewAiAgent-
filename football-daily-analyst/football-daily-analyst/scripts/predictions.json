@@ -1,0 +1,28 @@
+{
+  "predictions": [
+    {
+      "date": "2026-02-16",
+      "time": "19:02",
+      "home": "อาร์เซนอล",
+      "away": "แมนยู",
+      "prediction": "เจ้าบ้านชนะ",
+      "result": "home",
+      "correct": true
+    },
+    {
+      "date": "2026-02-16",
+      "time": "19:02",
+      "home": "บาร์ซ่า",
+      "away": "กิโรน่า",
+      "prediction": "เยือนชนะ",
+      "result": null,
+      "correct": null
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "correct": 1,
+    "wrong": 0,
+    "pending": 1
+  }
+}

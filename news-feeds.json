@@ -1,0 +1,9 @@
+{
+  "feeds": [
+    { "name": "Blognone", "url": "https://www.blognone.com/atom.xml" },
+    { "name": "The Verge", "url": "https://www.theverge.com/rss/index.xml" },
+    { "name": "TechCrunch", "url": "https://techcrunch.com/feed/" },
+    { "name": "OpenAI Blog", "url": "https://openai.com/news/rss.xml" }
+  ],
+  "last_check": null
+}

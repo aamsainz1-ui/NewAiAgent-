@@ -1,0 +1,489 @@
+{
+  "timestamp": "2026-02-28T07:03:19.496Z",
+  "round": "afternoon",
+  "channels": {
+    "social_media": {
+      "tiktok": {
+        "videos": [],
+        "influencers": [],
+        "trends": [],
+        "hashtags": [
+          "#เว็บพนัน",
+          "#แทงบอล",
+          "#คาสิโน"
+        ]
+      },
+      "facebook": {
+        "pages": [],
+        "groups": [],
+        "posts": [],
+        "ads": []
+      },
+      "instagram": {
+        "stories": [],
+        "reels": [],
+        "influencers": []
+      },
+      "twitter": {
+        "tweets": [],
+        "threads": [],
+        "trending": []
+      }
+    },
+    "paid_ads": {
+      "google": {
+        "keywords": [
+          "แทงบอล",
+          "คาสิโนออนไลน์",
+          "บาคาร่า",
+          "สล็อต"
+        ],
+        "ad_copies": [],
+        "landing_pages": []
+      },
+      "facebook": {
+        "ad_library": [],
+        "creatives": [],
+        "targeting": []
+      },
+      "tiktok": {
+        "ads": [],
+        "spark_ads": [],
+        "trends": []
+      }
+    },
+    "seo": {
+      "timestamp": "2026-02-28T07:03:19.496Z",
+      "method": "FREE_TOOLS",
+      "google_trends": {
+        "source": "Google Trends (Free)",
+        "keywords": [
+          "แทงบอล",
+          "คาสิโน",
+          "บาคาร่า",
+          "สล็อต",
+          "ufabet",
+          "sbobet"
+        ],
+        "data": [],
+        "url": "https://trends.google.com/trends/trendingsearches/daily?geo=TH"
+      },
+      "keywords": {
+        "tracked": [
+          "แทงบอล",
+          "แทงบอลออนไลน์",
+          "พนันบอล",
+          "บอลสเต็ป",
+          "บอลเดี่ยว",
+          "ราคาบอล",
+          "คาสิโนออนไลน์",
+          "บาคาร่า",
+          "บาคาร่าออนไลน์",
+          "สล็อต",
+          "สล็อตออนไลน์",
+          "รูเล็ต",
+          "ไฮโล",
+          "เสือมังกร",
+          "หวยออนไลน์",
+          "หวยไทย",
+          "หวยลาว",
+          "หวยยี่กี",
+          "เว็บพนัน",
+          "เว็บพนันออนไลน์",
+          "เว็บตรง",
+          "เว็บพนันอันดับ1",
+          "เว็บพนันที่ดีที่สุด",
+          "ufabet",
+          "sbobet",
+          "lsm99",
+          "gclub",
+          "royal online",
+          "holiday palace",
+          "แทงบอลเว็บไหนดี",
+          "คาสิโนเว็บตรง",
+          "บาคาร่าเว็บตรง",
+          "สล็อตแตกง่าย",
+          "สมัครแทงบอล",
+          "เว็บพนันแจกเครดิตฟรี"
+        ],
+        "high_volume": [],
+        "long_tail": [],
+        "trending": []
+      },
+      "serp_results": {
+        "source": "Free SERP Scraping",
+        "queries": [
+          "แทงบอลออนไลน์ site:.com",
+          "คาสิโนออนไลน์ 2026",
+          "เว็บพนันอันดับ1",
+          "บาคาร่าเว็บตรง",
+          "สล็อตแตกง่าย"
+        ],
+        "results": [
+          {
+            "competitor": "ufabet",
+            "domains": [
+              "ufabet.com",
+              "ufabet.co",
+              "ufabet.net"
+            ],
+            "keywords": [
+              "ufabet",
+              "ยูฟ่าเบท"
+            ],
+            "rankings": {}
+          },
+          {
+            "competitor": "sbobet",
+            "domains": [
+              "sbobet.com",
+              "sbobetmobile.com"
+            ],
+            "keywords": [
+              "sbobet",
+              "สโบเบ็ต"
+            ],
+            "rankings": {}
+          },
+          {
+            "competitor": "lsm99",
+            "domains": [
+              "lsm99.com",
+              "lsm99.net"
+            ],
+            "keywords": [
+              "lsm99",
+              "แอลเอสเอ็ม"
+            ],
+            "rankings": {}
+          },
+          {
+            "competitor": "gclub",
+            "domains": [
+              "gclub.com",
+              "gclub168.com"
+            ],
+            "keywords": [
+              "gclub",
+              "จีคลับ"
+            ],
+            "rankings": {}
+          },
+          {
+            "competitor": "holiday",
+            "domains": [
+              "holidaypalace.com",
+              "holiday-casino.com"
+            ],
+            "keywords": [
+              "holiday palace",
+              "ฮอลิเดย์"
+            ],
+            "rankings": {}
+          },
+          {
+            "competitor": "royal",
+            "domains": [
+              "royalonline.v2.com",
+              "royal1688.com"
+            ],
+            "keywords": [
+              "royal online",
+              "royal"
+            ],
+            "rankings": {}
+          }
+        ]
+      },
+      "competitor_meta": [
+        {
+          "domain": "ufabet.com",
+          "name": "ufabet",
+          "title": "",
+          "metaDescription": "",
+          "metaKeywords": "",
+          "headings": {
+            "h1": [],
+            "h2": []
+          },
+          "lastChecked": "2026-02-28T07:03:19.496Z"
+        },
+        {
+          "domain": "sbobet.com",
+          "name": "sbobet",
+          "title": "",
+          "metaDescription": "",
+          "metaKeywords": "",
+          "headings": {
+            "h1": [],
+            "h2": []
+          },
+          "lastChecked": "2026-02-28T07:03:19.496Z"
+        },
+        {
+          "domain": "lsm99.com",
+          "name": "lsm99",
+          "title": "",
+          "metaDescription": "",
+          "metaKeywords": "",
+          "headings": {
+            "h1": [],
+            "h2": []
+          },
+          "lastChecked": "2026-02-28T07:03:19.496Z"
+        },
+        {
+          "domain": "gclub.com",
+          "name": "gclub",
+          "title": "",
+          "metaDescription": "",
+          "metaKeywords": "",
+          "headings": {
+            "h1": [],
+            "h2": []
+          },
+          "lastChecked": "2026-02-28T07:03:19.496Z"
+        },
+        {
+          "domain": "holidaypalace.com",
+          "name": "holiday",
+          "title": "",
+          "metaDescription": "",
+          "metaKeywords": "",
+          "headings": {
+            "h1": [],
+            "h2": []
+          },
+          "lastChecked": "2026-02-28T07:03:19.496Z"
+        }
+      ],
+      "related_searches": [],
+      "people_also_ask": []
+    },
+    "influencer": {
+      "youtube": {
+        "channels": [],
+        "videos": [],
+        "mentions": []
+      },
+      "tiktok": {
+        "creators": [],
+        "sponsored": [],
+        "viral": []
+      },
+      "bloggers": {
+        "websites": [],
+        "reviews": [],
+        "affiliates": []
+      }
+    },
+    "content": {
+      "youtube": {
+        "review_videos": [],
+        "live_streams": [],
+        "shorts": []
+      },
+      "blogs": {
+        "articles": [],
+        "guest_posts": [],
+        "sponsored_content": []
+      },
+      "podcasts": {
+        "episodes": [],
+        "mentions": []
+      }
+    },
+    "messaging": {
+      "line": {
+        "groups": [],
+        "official_accounts": [],
+        "broadcast": []
+      },
+      "telegram": {
+        "channels": [],
+        "groups": [],
+        "bots": []
+      },
+      "discord": {
+        "servers": [],
+        "communities": []
+      }
+    },
+    "forums": {
+      "pantip": {
+        "threads": [],
+        "comments": [],
+        "trending": []
+      },
+      "reddit": {
+        "subreddits": [
+          "r/thailand",
+          "r/gambling"
+        ],
+        "posts": []
+      },
+      "review_sites": {
+        "trustpilot": [],
+        "thai_review_sites": []
+      }
+    },
+    "direct": {
+      "sms": {
+        "promotions": [],
+        "new_user": [],
+        "retention": []
+      },
+      "email": {
+        "campaigns": [],
+        "newsletters": []
+      },
+      "push": {
+        "notifications": [],
+        "in_app": []
+      }
+    },
+    "offline": {
+      "qr_codes": {
+        "locations": [],
+        "campaigns": []
+      },
+      "events": {
+        "booths": [],
+        "sponsorships": []
+      },
+      "merchandise": {
+        "team_shirts": [],
+        "giveaways": []
+      }
+    },
+    "streaming": {
+      "twitch": {
+        "streamers": [],
+        "categories": []
+      },
+      "facebook_live": {
+        "pages": [],
+        "influencers": []
+      },
+      "youtube_live": {
+        "channels": [],
+        "streams": []
+      }
+    },
+    "community": {
+      "experts": {
+        "เซียนบอล": [],
+        "เซียนบาคาร่า": [],
+        "tipsters": []
+      },
+      "prediction_sites": {
+        "ทีเด็ดบอล": [],
+        "วิเคราะห์บอล": []
+      },
+      "vip_groups": {
+        "paid_groups": [],
+        "private_channels": []
+      }
+    },
+    "news": {
+      "sports_news": {
+        "sites": [],
+        "articles": []
+      },
+      "sponsorships": {
+        "football_teams": [],
+        "leagues": [],
+        "events": []
+      },
+      "pr_articles": {
+        "press_releases": [],
+        "media_coverage": []
+      }
+    }
+  },
+  "competitors": [
+    {
+      "name": "ufabet",
+      "domains": [
+        "ufabet.com",
+        "ufabet.co"
+      ],
+      "social_handles": [
+        "@ufabetofficial"
+      ],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    },
+    {
+      "name": "sbobet",
+      "domains": [
+        "sbobet.com",
+        "sbobetmobile.com"
+      ],
+      "social_handles": [
+        "@sbobet"
+      ],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    },
+    {
+      "name": "lsm99",
+      "domains": [
+        "lsm99.com",
+        "lsm99.net"
+      ],
+      "social_handles": [
+        "@lsm99official"
+      ],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    },
+    {
+      "name": "gclub",
+      "domains": [
+        "gclub.com",
+        "gclub168.com"
+      ],
+      "social_handles": [
+        "@gclubcasino"
+      ],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    },
+    {
+      "name": "holiday",
+      "domains": [
+        "holidaypalace.com"
+      ],
+      "social_handles": [
+        "@holidaypalace"
+      ],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    },
+    {
+      "name": "royalonline",
+      "domains": [
+        "royalonline.v2.com"
+      ],
+      "social_handles": [],
+      "promotions": [],
+      "changes": [],
+      "last_updated": "2026-02-28T07:03:19.496Z"
+    }
+  ],
+  "insights": {
+    "new_campaigns": [],
+    "trending_keywords": [],
+    "active_influencers": [],
+    "new_ads": [],
+    "promotions": [],
+    "threats": [],
+    "opportunities": []
+  }
+}
